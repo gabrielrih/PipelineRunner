@@ -1,29 +1,15 @@
 from src.pipeline import PipelineBatchRunner
-from src.util.json import load_json_from_file
+from src.scope import get_pipelines_from_scope
 from src.util.logger import Logger
 
 import click
 
-# loading .env file
+from time import time
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv() # loading .env file
 
 
 logger = Logger.get_logger(__name__)
-
-
-def get_pipelines_from_scope(scope: str):
-    if scope == 'dev':
-        return load_json_from_file(path = 'config/runs-for-dev.json')
-    elif scope == 'stg':
-        return load_json_from_file(path = 'config/runs-for-stg.json')
-    elif scope == 'prd':
-        return load_json_from_file(path = 'config/runs-for-prd.json')
-    elif scope == 'test':
-        return load_json_from_file(path = 'config/test-runs.json')
-    raise NotImplementedError("The scope option 'all' is not implemented yet")
-    # TO DO
-    # Merge all the scopes at once
     
 
 @click.command()
@@ -34,9 +20,15 @@ def get_pipelines_from_scope(scope: str):
               help = 'Scope to be used')
 def run(scope: str) -> None:
     pipelines = get_pipelines_from_scope(scope)
+    
     logger.info(f'Running using {scope =}')
+    logger.info(f'Running for these pipelines: \r\n{pipelines}')
+    start_time = time()
     runner = PipelineBatchRunner(pipelines)
     runner.run_all()
+    end_time = time()
+
+    logger.info(f'Execution time: {end_time - start_time}')
 
 
 if __name__ == '__main__':
