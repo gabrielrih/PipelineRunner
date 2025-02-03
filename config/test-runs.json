@@ -1,0 +1,20 @@
+[
+    {
+        "pipeline_definition_id": 17116,
+        "pipeline_name": "hoop-agent-dev-for-hoop-stg",
+        "runs": [
+            {
+                "parameters": { "agent": "aks-sharedservices-dev-scus-001" }
+            },
+            {
+                "parameters": { "agent": "aks-logco-dev-scus-001" }
+            },
+            {
+                "parameters": { "agent": "aks-brewtech-dev-scus-001" }
+            },
+            {
+                "parameters": { "agent": "aks-tecx-dev-scus-001" }
+            }
+        ]
+    }
+]

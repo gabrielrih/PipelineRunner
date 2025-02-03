@@ -1,0 +1,32 @@
+[
+    {
+        "pipeline_definition_id": 13319,
+        "pipeline_name": "hoop-agent-stg",
+        "runs": [
+            {
+                "parameters": { "agent": "aks-iris-stg-scus-001" }
+            },
+            {
+                "parameters": { "agent": "aks-functions-stg-brs-001" }
+            },
+            {
+                "parameters": { "agent": "aks-tecx-stg-brs-001" }
+            },
+            {
+                "parameters": { "agent": "aks-techops-stg-brs-001" }
+            },
+            {
+                "parameters": { "agent": "aks-sharedservices-stg-brs-002" }
+            },
+            {
+                "parameters": { "agent": "aks-brewtech-stg-brs-001" }
+            },
+            {
+                "parameters": { "agent": "aks-las-stg-brs-001" }
+            },
+            {
+                "parameters": { "agent": "aks-logco-stg-brs-001" }
+            }
+        ]
+    }
+]
