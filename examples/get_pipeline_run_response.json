@@ -1,0 +1,52 @@
+{
+    "yamlDetails": {
+        "rootYamlFile": {
+            "ref": "refs/heads/main",
+            "yamlFile": "agent/dev/azure-pipelines.yml",
+            "repoAlias": "self"
+        },
+        "expandedYamlUrl": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_apis/build/builds/2941048/logs/1"
+    },
+    "_links": {
+        "self": {
+            "href": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_apis/pipelines/13467/runs/2941048"
+        },
+        "web": {
+            "href": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_build/results?buildId=2941048"
+        },
+        "pipeline.web": {
+            "href": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_build/definition?definitionId=13467"
+        },
+        "pipeline": {
+            "href": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_apis/pipelines/13467?revision=2"
+        }
+    },
+    "templateParameters": {
+        "agent": "aks-sharedservices-dev-scus-001"
+    },
+    "pipeline": {
+        "url": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_apis/pipelines/13467?revision=2",
+        "id": 13467,
+        "revision": 2,
+        "name": "hoop-agent-dev",
+        "folder": "\\"
+    },
+    "state": "inProgress",
+    "createdDate": "2025-02-03T14:38:01.8840371Z",
+    "url": "https://dev.azure.com/AMBEV-SA/f7f0c9a3-3d05-47e1-b71a-7f66ffd0e1ce/_apis/pipelines/13467/runs/2941048",
+    "resources": {
+        "repositories": {
+            "self": {
+                "repository": {
+                    "id": "7d5320c3-e6bc-422e-8964-344487af9e1c",
+                    "fullName": "AMBEV-ENGENHARIA-CLOUD-TOOLS/ambev-engenharia-cloud-hoop",
+                    "type": "azureReposGit"
+                },
+                "refName": "refs/heads/main",
+                "version": "a762a9d9175e754e41f05f8379be5923c3744274"
+            }
+        }
+    },
+    "id": 2941048,
+    "name": "20250203.6"
+}
