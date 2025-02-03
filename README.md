@@ -2,6 +2,11 @@
 It automatically runs dozens of times the same pipeline on Azure
 
 # Running it
+
+First off all you must create a ```.env``` file on the root folder and set all the env vars specified on the [src/env.py](./src/env.py) file.
+
+Then, you can install the dependencies and run the automation.
+
 ```sh
 poetry install --no-root
 poetry run python main.py
