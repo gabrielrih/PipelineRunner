@@ -46,7 +46,7 @@ class PipelineBatchRunner:
 
 
 class PipelineRunner:
-    TIME_IN_SECONDS_TO_CHECK_STATUS = 20
+    TIME_IN_SECONDS_TO_CHECK_STATUS = 10
 
     def __init__(self, pipeline: Dict):
         self.definition_id: str = pipeline['pipeline_definition_id']
@@ -64,18 +64,17 @@ class PipelineRunner:
         manager = AzurePipelinesAPI(name = self.name, definition_id = self.definition_id)
         response: RunInfo = manager.trigger_pipeline(params)
 
-        # Waiting until the pipeline finishes
         run_id = response.id
-        logger.info('Waiting the run completes')
+        logger.info('Waiting the run to complete')
         current_status = response.status
         while current_status != RunStatus.COMPLETED:
             time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
             current_status: RunStatus = manager.get_run_status(run_id = run_id)
             logger.debug(current_status)
             if current_status == RunStatus.CANCELED:
-                raise Exception(f'The pipeline {self.name} on run {run_id} was CANCELED! Exiting')
+                raise Exception(f'The run {run_id} on pipeline {self.name} was CANCELED! Exiting')
             
-        logger.info(f'✅ The {run_id =} on pipeline {self.name} ends successfully!')
+        logger.info(f'✅ The {run_id =} on pipeline {self.name} ended successfully!')
 
 
 class AzurePipelinesAPI:

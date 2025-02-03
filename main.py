@@ -26,9 +26,8 @@ def run(scope: str) -> None:
     start_time = time()
     runner = PipelineBatchRunner(pipelines)
     runner.run_all()
-    end_time = time()
-
-    logger.info(f'Execution time: {end_time - start_time}')
+    elapsed_time_in_minutes = (time() - start_time) / 60
+    logger.info(f'Execution time: {elapsed_time_in_minutes:.2f} minutes')
 
 
 if __name__ == '__main__':
