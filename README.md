@@ -5,7 +5,7 @@ You must configure the pipeline information and the parameters to be passed to t
 
 # Running it
 
-First off all you must create a ```.env``` file on the root folder and set all the env vars specified on the [src/env.py](./src/env.py) file.
+First off all you must create a ```.env``` file on the root folder and set all the env vars specified on the [src/config.py](./src/config.py) file.
 
 Then, you can install the dependencies and run the automation.
 

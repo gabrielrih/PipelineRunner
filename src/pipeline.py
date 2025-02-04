@@ -1,3 +1,6 @@
+from src.config import DevOpsConfig
+from src.util.logger import Logger
+
 import base64
 import json
 import requests
@@ -7,10 +10,6 @@ from typing import List, Dict
 from http import HTTPStatus
 from enum import Enum, auto
 from dataclasses import dataclass
-
-import src.env as envs
-
-from src.util.logger import Logger
 
 
 logger = Logger.get_logger(__name__)
@@ -81,13 +80,13 @@ class AzurePipelinesAPI:
     def __init__(self, name: str, definition_id: str):
         self.name = name
         self.definition_id = definition_id
-        auth = base64.b64encode(f":{envs.AZURE_DEVOPS_PERSONAL_ACCESS_TOKEN}".encode("ascii")).decode("ascii")
+        auth = base64.b64encode(f":{DevOpsConfig.personal_access_token}".encode("ascii")).decode("ascii")
         self.headers = {
             "Authorization": f"Basic {auth}",
             "Content-Type": "application/json"
         }
-        self.organization_name = envs.AZURE_DEVOPS_ORGANIZATION_NAME
-        self.project_name = envs.AZURE_DEVOPS_PROJECT_NAME
+        self.organization_name = DevOpsConfig.organization_name
+        self.project_name = DevOpsConfig.project_name
         self.api_version = '7.1'
 
     # Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/pipelines/runs/run-pipeline?view=azure-devops-rest-7.1
@@ -126,3 +125,4 @@ class AzurePipelinesAPI:
         logger.debug(response.json())
         raw_state = response.json()['state']
         return RunStatus.from_string(raw_state)
+
