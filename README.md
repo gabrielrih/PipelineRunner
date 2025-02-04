@@ -1,7 +1,7 @@
 # PipelineRunner
 It automatically triggers multiple times pipelines on Azure.
 
-You must configure the pipeline information and the parameters to be passed to the run on the [configs](./configs) folder.
+You must configure the pipeline information and the parameters to be passed to the run on the [config](./config) folder.
 
 # Running it
 
