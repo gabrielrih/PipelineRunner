@@ -9,7 +9,7 @@ Then, you can install the dependencies and run the automation.
 
 ```sh
 poetry install --no-root
-poetry run python main.py
+poetry run python main.py --scope all
 ```
 
 > Check python main.py help to see the required parameters.
