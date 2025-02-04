@@ -1,5 +1,7 @@
-# run-azure-pipeline
-It automatically runs dozens of times the same pipeline on Azure
+# PipelineRunner
+It automatically triggers multiple times pipelines on Azure.
+
+You must configure the pipeline information and the parameters to be passed to the run on the [config](./config) folder.
 
 # Running it
 
