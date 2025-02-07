@@ -50,6 +50,9 @@ class PipelineRunner:
     def __init__(self, pipeline: Dict):
         self.definition_id: str = pipeline['pipeline_definition_id']
         self.name: str = pipeline['pipeline_name']
+        self.branch_name = 'main'
+        if pipeline.get('branch_name'):
+            self.branch_name = pipeline['branch_name']
         self.runs: List[Dict] = pipeline['runs']
 
     def run(self):
@@ -60,7 +63,11 @@ class PipelineRunner:
             self.__for_each_run(params = parameters)
 
     def __for_each_run(self, params: Dict):
-        manager = AzurePipelinesAPI(name = self.name, definition_id = self.definition_id)
+        manager = AzurePipelinesAPI(
+            name = self.name,
+            definition_id = self.definition_id,
+            branch_name = self.branch_name
+        )
         response: RunInfo = manager.trigger_pipeline(params)
 
         run_id = response.id
@@ -77,9 +84,10 @@ class PipelineRunner:
 
 
 class AzurePipelinesAPI:
-    def __init__(self, name: str, definition_id: str):
+    def __init__(self, name: str, definition_id: str, branch_name: str = 'main'):
         self.name = name
         self.definition_id = definition_id
+        self.branch_name = branch_name
         auth = base64.b64encode(f":{DevOpsConfig.personal_access_token}".encode("ascii")).decode("ascii")
         self.headers = {
             "Authorization": f"Basic {auth}",
@@ -96,7 +104,7 @@ class AzurePipelinesAPI:
             "resources": {
                 "repositories": {
                     "self": {
-                        "refName": "refs/heads/main"
+                        "refName": f"refs/heads/{self.branch_name}"
                     }
                 }
             },
