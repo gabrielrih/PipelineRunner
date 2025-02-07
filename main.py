@@ -5,8 +5,6 @@ from src.util.logger import Logger
 import click
 
 from time import time
-from dotenv import load_dotenv
-load_dotenv() # loading .env file
 
 
 logger = Logger.get_logger(__name__)

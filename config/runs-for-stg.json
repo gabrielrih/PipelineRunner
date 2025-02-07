@@ -1,31 +1,32 @@
 [
     {
-        "pipeline_definition_id": 13319,
-        "pipeline_name": "hoop-agent-stg",
+        "pipeline_definition_id": 17845,
+        "pipeline_name": "ambev-engenharia-cloud-hoop-prd-agents",
+        "branch_name": "main",
         "runs": [
             {
-                "parameters": { "agent": "aks-iris-stg-scus-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-iris-stg-scus-001" }
             },
             {
-                "parameters": { "agent": "aks-functions-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-functions-stg-brs-001" }
             },
             {
-                "parameters": { "agent": "aks-tecx-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-tecx-stg-brs-001" }
             },
             {
-                "parameters": { "agent": "aks-techops-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-techops-stg-brs-001" }
             },
             {
-                "parameters": { "agent": "aks-sharedservices-stg-brs-002" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-sharedservices-stg-brs-002" }
             },
             {
-                "parameters": { "agent": "aks-brewtech-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-brewtech-stg-brs-001" }
             },
             {
-                "parameters": { "agent": "aks-las-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-las-stg-brs-001" }
             },
             {
-                "parameters": { "agent": "aks-logco-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-logco-stg-brs-001" }
             }
         ]
     }

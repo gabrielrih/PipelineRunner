@@ -1,3 +1,6 @@
+from src.config import DevOpsConfig
+from src.util.logger import Logger
+
 import base64
 import json
 import requests
@@ -7,10 +10,6 @@ from typing import List, Dict
 from http import HTTPStatus
 from enum import Enum, auto
 from dataclasses import dataclass
-
-import src.env as envs
-
-from src.util.logger import Logger
 
 
 logger = Logger.get_logger(__name__)
@@ -51,6 +50,9 @@ class PipelineRunner:
     def __init__(self, pipeline: Dict):
         self.definition_id: str = pipeline['pipeline_definition_id']
         self.name: str = pipeline['pipeline_name']
+        self.branch_name = 'main'
+        if pipeline.get('branch_name'):
+            self.branch_name = pipeline['branch_name']
         self.runs: List[Dict] = pipeline['runs']
 
     def run(self):
@@ -61,7 +63,11 @@ class PipelineRunner:
             self.__for_each_run(params = parameters)
 
     def __for_each_run(self, params: Dict):
-        manager = AzurePipelinesAPI(name = self.name, definition_id = self.definition_id)
+        manager = AzurePipelinesAPI(
+            name = self.name,
+            definition_id = self.definition_id,
+            branch_name = self.branch_name
+        )
         response: RunInfo = manager.trigger_pipeline(params)
 
         run_id = response.id
@@ -78,16 +84,17 @@ class PipelineRunner:
 
 
 class AzurePipelinesAPI:
-    def __init__(self, name: str, definition_id: str):
+    def __init__(self, name: str, definition_id: str, branch_name: str = 'main'):
         self.name = name
         self.definition_id = definition_id
-        auth = base64.b64encode(f":{envs.AZURE_DEVOPS_PERSONAL_ACCESS_TOKEN}".encode("ascii")).decode("ascii")
+        self.branch_name = branch_name
+        auth = base64.b64encode(f":{DevOpsConfig.personal_access_token}".encode("ascii")).decode("ascii")
         self.headers = {
             "Authorization": f"Basic {auth}",
             "Content-Type": "application/json"
         }
-        self.organization_name = envs.AZURE_DEVOPS_ORGANIZATION_NAME
-        self.project_name = envs.AZURE_DEVOPS_PROJECT_NAME
+        self.organization_name = DevOpsConfig.organization_name
+        self.project_name = DevOpsConfig.project_name
         self.api_version = '7.1'
 
     # Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/pipelines/runs/run-pipeline?view=azure-devops-rest-7.1
@@ -97,7 +104,7 @@ class AzurePipelinesAPI:
             "resources": {
                 "repositories": {
                     "self": {
-                        "refName": "refs/heads/main"
+                        "refName": f"refs/heads/{self.branch_name}"
                     }
                 }
             },
@@ -126,3 +133,4 @@ class AzurePipelinesAPI:
         logger.debug(response.json())
         raw_state = response.json()['state']
         return RunStatus.from_string(raw_state)
+
