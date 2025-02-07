@@ -2,7 +2,7 @@
     {
         "pipeline_definition_id": 17840,
         "pipeline_name": "ambev-engenharia-cloud-hoop-stg-agents",
-        "branch_name": "fix/some-fixes",
+        "branch_name": "main",
         "runs": [
             {
                 "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-sharedservices-dev-scus-001" }
