@@ -4,7 +4,6 @@ from src.util.logger import Logger
 import base64
 import json
 import requests
-import time
 
 from typing import List, Dict
 from http import HTTPStatus
@@ -33,54 +32,6 @@ class RunStatus(Enum):
 class RunInfo:
     id: str
     status: RunStatus
-
-
-class PipelineBatchRunner:
-    def __init__(self, pipelines: List[Dict]):
-        self.pipelines = pipelines
-
-    def run_all(self):
-        for pipeline in self.pipelines:
-            PipelineRunner(pipeline).run()
-
-
-class PipelineRunner:
-    TIME_IN_SECONDS_TO_CHECK_STATUS = 10
-
-    def __init__(self, pipeline: Dict):
-        self.definition_id: str = pipeline['pipeline_definition_id']
-        self.name: str = pipeline['pipeline_name']
-        self.branch_name = 'main'
-        if pipeline.get('branch_name'):
-            self.branch_name = pipeline['branch_name']
-        self.runs: List[Dict] = pipeline['runs']
-
-    def run(self):
-        logger.info(f'Starting runs on pipeline {self.name} ({self.definition_id =})')
-
-        for run in self.runs:
-            parameters = run['parameters']
-            self.__for_each_run(params = parameters)
-
-    def __for_each_run(self, params: Dict):
-        manager = AzurePipelinesAPI(
-            name = self.name,
-            definition_id = self.definition_id,
-            branch_name = self.branch_name
-        )
-        response: RunInfo = manager.trigger_pipeline(params)
-
-        run_id = response.id
-        logger.info('Waiting the run to complete')
-        current_status = response.status
-        while current_status != RunStatus.COMPLETED:
-            time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
-            current_status: RunStatus = manager.get_run_status(run_id = run_id)
-            logger.debug(current_status)
-            if current_status == RunStatus.CANCELED:
-                raise Exception(f'The run {run_id} on pipeline {self.name} was CANCELED! Exiting')
-            
-        logger.info(f'✅ The {run_id =} on pipeline {self.name} ended successfully!')
 
 
 class AzurePipelinesAPI:
@@ -123,8 +74,7 @@ class AzurePipelinesAPI:
             )
 
         error_message = f'❌ Failed to trigger pipeline. Status Code: {response.status_code}, Response: {response.text}'
-        logger.exception(error_message)
-        raise Exception(error_message)
+        raise ErrorWhenRunningPipeline(error_message)
 
     # Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/pipelines/runs/get?view=azure-devops-rest-7.1
     def get_run_status(self, run_id: str) -> RunStatus:
@@ -134,3 +84,6 @@ class AzurePipelinesAPI:
         raw_state = response.json()['state']
         return RunStatus.from_string(raw_state)
 
+
+class ErrorWhenRunningPipeline(RuntimeError): 
+    pass
