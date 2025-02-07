@@ -21,7 +21,6 @@ logger = Logger.get_logger(__name__)
               required = False,
               default = Mode.PARALLEL.value,
               help = Mode.get_help_message())
-#@click.option('--dry-run', is_flag=True, help="Run in dry-run mode (no changes applied)")
 def run(scope: str, mode: str) -> None:
     logger.info(f'Starting using: {locals()}')
     pipelines = get_pipelines_from_scope(scope)
