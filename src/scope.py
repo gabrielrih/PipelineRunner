@@ -5,27 +5,34 @@ from enum import Enum
 from typing import List
 
 
-class ConfigMapper(Enum):
-    DEV = 'config/runs-for-dev.json'
-    STG = 'config/runs-for-stg.json'
-    PRD = 'config/runs-for-prd.json'
-    TEST = 'config/test-runs.json'
+class Scope(Enum):
+    DEV = ('dev', 'config/runs-for-dev.json')
+    STG = ('stg', 'config/runs-for-stg.json')
+    PRD = ('prd', 'config/runs-for-prd.json')
+    TEST = ('test', 'config/test-runs.json')
+    
+    def __init__(self, value: str, path: str):
+        self._value_ = value
+        self.path = path
+
+    def get_values() -> List:
+        scopes = list()
+        for scope in Scope:
+            scopes.append(scope.value)
+        return scopes
+    
+    def get_help_message() -> str:
+        return 'Scope of pipelines to run'
 
 
 def get_pipelines_from_scope(scope: str):
-    if scope == 'dev':
-        return load_json_from_file(path = ConfigMapper.DEV.value)
-    elif scope == 'stg':
-        return load_json_from_file(path = ConfigMapper.STG.value)
-    elif scope == 'prd':
-        return load_json_from_file(path = ConfigMapper.PRD.value)
-    elif scope == 'test':
-        return load_json_from_file(path = ConfigMapper.TEST.value)
-    pipelines: List = list()
-    for config in ConfigMapper:
-        # The test value is really just for testing, so ignores it even when using the ALL scope
-        if config == ConfigMapper.TEST:
-            continue
-        pipelines += load_json_from_file(path = config.value)
-    return pipelines
-    
+    scope: Scope = Scope[scope.upper()]  # from str to Scope
+    if scope == Scope.DEV:
+        return load_json_from_file(path = Scope.DEV.path)
+    elif scope == Scope.STG:
+        return load_json_from_file(path = Scope.STG.path)
+    elif scope == Scope.PRD:
+        return load_json_from_file(path = Scope.PRD.path)
+    elif scope == Scope.TEST:
+        return load_json_from_file(path = Scope.TEST.path)
+    raise ValueError('Scope {scope} not allowed!')

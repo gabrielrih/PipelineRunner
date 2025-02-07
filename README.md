@@ -11,7 +11,7 @@ Then, you can install the dependencies and run the automation.
 
 ```sh
 poetry install --no-root
-poetry run python main.py --scope all
+poetry run python main.py --scope all --mode parallel
 ```
 
 > Check python main.py help to see the required parameters.
