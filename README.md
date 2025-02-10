@@ -51,7 +51,7 @@ parameters:
 
 ```
 
-> On the [pipelines](./pipelines/) folder you can see some example of configurations.
+> On the [examples](./examples/) folder you can see some example of configurations.
 
 Once you have the JSON file created, you must create a ```.env``` file on the root folder and set all the env vars specified on the [src/config.py](./src/config.py) file using the format below:
 
