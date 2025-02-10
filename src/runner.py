@@ -102,13 +102,13 @@ class PipelineExecution:
     def __init__(self, pipeline: Pipeline, params: Dict):
         self.params = params
         self.pipeline_name = pipeline.pipeline_name
-        self.manager = AzurePipelinesAPI(pipeline = pipeline)
+        self.api = AzurePipelinesAPI(pipeline = pipeline)
         self.run_info: RunInfo = None
 
     def start(self):
         if self.run_info:
             raise PipelineExecutionAlreadyRunning(f'The run {self.run_info.id} is already running!')
-        self.run_info: RunInfo = self.manager.trigger_pipeline(self.params)
+        self.run_info: RunInfo = self.api.trigger_pipeline(self.params)
 
     def start_and_wait(self):
         self.start()
@@ -132,7 +132,7 @@ class PipelineExecution:
     def get_current_status(self) -> RunStatus:
         if not self.run_info:
             raise PipelineExecutionIsNotRunning('You must start the pipeline run before check its status')
-        return self.manager.get_run_status(run_id = self.run_info.id)
+        return self.api.get_run_status(run_id = self.run_info.id)
 
 
 class PipelineExecutionAlreadyRunning(RuntimeError):
