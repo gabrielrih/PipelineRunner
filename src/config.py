@@ -9,7 +9,6 @@ load_dotenv() # loading .env file
 class DevOpsConfig:
     personal_access_token: str = os.getenv("AZURE_DEVOPS_PERSONAL_ACCESS_TOKEN")
     organization_name: str = os.getenv("AZURE_DEVOPS_ORGANIZATION_NAME")
-    project_name: str = os.getenv("AZURE_DEVOPS_PROJECT_NAME")
 
     @classmethod
     def validate(cls):

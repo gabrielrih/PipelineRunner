@@ -1,4 +1,4 @@
-from src.scope import get_pipelines_from_scope, Scope
+from src.pipeline.pipeline import Pipeline
 from src.runner import Mode, PipelineBatchRunner
 from src.util.logger import Logger
 
@@ -11,19 +11,18 @@ logger = Logger.get_logger(__name__)
     
 
 @click.command()
-@click.option('--scope',
-              type = click.Choice(Scope.get_values()),
-              required = False,
-              default = Scope.TEST.value,
-              help = Scope.get_help_message())
+@click.option('--pipeline-file',
+              type = click.STRING,
+              required = True,
+              help = 'Path to the json file')
 @click.option('--mode',
               type = click.Choice(Mode.get_values()),
               required = False,
               default = Mode.PARALLEL.value,
               help = Mode.get_help_message())
-def run(scope: str, mode: str) -> None:
+def run(pipeline_file: str, mode: str) -> None:
     logger.info(f'Starting using: {locals()}')
-    pipelines = get_pipelines_from_scope(scope)
+    pipelines = Pipeline.from_json_file(pipeline_file)
     logger.info(f'Running for these pipelines: \r\n{pipelines}')
     start_time = time()
     runner = PipelineBatchRunner(pipelines, mode = Mode[mode.upper()])
