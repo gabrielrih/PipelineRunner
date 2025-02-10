@@ -10,6 +10,15 @@
             },
             {
                 "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-logco-dev-scus-001" }
+            },
+            {
+                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-brewtech-dev-scus-001" }
+            },
+            {
+                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-tecx-dev-scus-001" }
+            },
+            {
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT": "aks-sharedservices-stg-brs-002" }
             }
         ]
     }
