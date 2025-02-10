@@ -1,3 +1,4 @@
+from src.pipeline.pipeline import Pipeline
 from src.config import DevOpsConfig
 from src.util.logger import Logger
 
@@ -35,33 +36,30 @@ class RunInfo:
 
 
 class AzurePipelinesAPI:
-    def __init__(self, name: str, definition_id: str, branch_name: str = 'main'):
-        self.name = name
-        self.definition_id = definition_id
-        self.branch_name = branch_name
+    def __init__(self, pipeline: Pipeline):
+        self.pipeline = pipeline
         auth = base64.b64encode(f":{DevOpsConfig.personal_access_token}".encode("ascii")).decode("ascii")
         self.headers = {
             "Authorization": f"Basic {auth}",
             "Content-Type": "application/json"
         }
         self.organization_name = DevOpsConfig.organization_name
-        self.project_name = DevOpsConfig.project_name
         self.api_version = '7.1'
 
     # Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/pipelines/runs/run-pipeline?view=azure-devops-rest-7.1
     def trigger_pipeline(self, params: List[Dict]) -> RunInfo:
-        endpoint = f"https://dev.azure.com/{self.organization_name}/{self.project_name}/_apis/pipelines/{self.definition_id}/runs?api-version={self.api_version}"
+        endpoint = f"https://dev.azure.com/{self.organization_name}/{self.pipeline.project_name}/_apis/pipelines/{self.pipeline.definition_id}/runs?api-version={self.api_version}"
         body = {
             "resources": {
                 "repositories": {
                     "self": {
-                        "refName": f"refs/heads/{self.branch_name}"
+                        "refName": f"refs/heads/{self.pipeline.branch_name}"
                     }
                 }
             },
             "templateParameters": params
         }
-        logger.info(f"Triggering pipeline {self.name} with parameters: \r\n{json.dumps(params, indent=2)}")
+        logger.info(f"Triggering pipeline {self.pipeline.pipeline_name} with parameters: \r\n{json.dumps(params, indent=2)}")
         response = requests.post(endpoint, headers=self.headers, json=body)
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
@@ -78,7 +76,7 @@ class AzurePipelinesAPI:
 
     # Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/pipelines/runs/get?view=azure-devops-rest-7.1
     def get_run_status(self, run_id: str) -> RunStatus:
-        endpoint = f"https://dev.azure.com/{self.organization_name}/{self.project_name}/_apis/pipelines/{self.definition_id}/runs/{run_id}?api-version={self.api_version}"
+        endpoint = f"https://dev.azure.com/{self.organization_name}/{self.pipeline.project_name}/_apis/pipelines/{self.pipeline.definition_id}/runs/{run_id}?api-version={self.api_version}"
         response = requests.get(endpoint, headers = self.headers)
         logger.debug(response.json())
         raw_state = response.json()['state']

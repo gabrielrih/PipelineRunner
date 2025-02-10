@@ -4,7 +4,8 @@ from enum import Enum
 from typing import List, Dict
 from abc import ABC, abstractmethod
 
-from src.pipeline import AzurePipelinesAPI, RunInfo, RunStatus
+from src.pipeline.pipeline import Pipeline
+from src.pipeline.api import AzurePipelinesAPI, RunInfo, RunStatus
 from src.util.logger import Logger
 
 
@@ -37,7 +38,7 @@ class Mode(Enum):
 
 
 class PipelineBatchRunner:
-    def __init__(self, pipelines: List[Dict], mode: Mode):
+    def __init__(self, pipelines: List[Pipeline], mode: Mode):
         self.pipelines = pipelines
         self.mode = mode
 
@@ -54,81 +55,54 @@ class PipelineBatchRunner:
 class PipelineRunner(ABC):
     TIME_IN_SECONDS_TO_CHECK_STATUS = 10
 
-    def __init__(self, pipeline: Dict):
-        self.definition_id: str = pipeline['pipeline_definition_id']
-        self.name: str = pipeline['pipeline_name']
-        self.branch_name = 'main'
-        if pipeline.get('branch_name'):
-            self.branch_name = pipeline['branch_name']
-        self.runs: List[Dict] = pipeline['runs']
+    def __init__(self, pipeline: Pipeline):
+        self.pipeline = pipeline
 
     @abstractmethod
     def run(self): pass
 
 
 class PipelineRunnerSequentially(PipelineRunner):
-    def __init__(self, pipeline: Dict):
+    def __init__(self, pipeline: Pipeline):
         super().__init__(pipeline)
 
     def run(self):
-        logger.info(f'Starting sequentially {len(self.runs)} runs on pipeline {self.name} ({self.definition_id =})')
+        logger.info(f'Starting sequentially {len(self.pipeline.runs)} runs on pipeline {self.pipeline.pipeline_name} (definition_id = {self.pipeline.definition_id})')
 
-        for run in self.runs:
-            parameters = run['parameters']
-            execution = PipelineExecution(
-                pipeline_name = self.name,
-                pipeline_definition_id = self.definition_id,
-                branch_name = self.branch_name,
-                params = parameters
-            )
+        for run in self.pipeline.runs:
+            execution = PipelineExecution(self.pipeline, run.parameters)
             execution.start_and_wait()
 
 
 class PipelineRunnerInParallel(PipelineRunner):
-    def __init__(self, pipeline: Dict):
+    def __init__(self, pipeline: Pipeline):
         super().__init__(pipeline)
 
     def run(self):
-        logger.info(f'Starting at once {len(self.runs)} runs on pipeline {self.name} ({self.definition_id =})')
+        logger.info(f'Starting at once {len(self.pipeline.runs)} runs on pipeline {self.pipeline.pipeline_name} (definition_id = {self.pipeline.definition_id})')
         executions = list()
-        for run in self.runs:
-            parameters = run['parameters']
-            execution = PipelineExecution(
-                pipeline_name = self.name,
-                pipeline_definition_id = self.definition_id,
-                branch_name = self.branch_name,
-                params = parameters
-            )
+        for run in self.pipeline.runs:
+            execution = PipelineExecution(self.pipeline, run.parameters)
             execution.start()
             executions.append(execution)
 
-        logger.info(f'Waiting {len(self.runs)} run(s) to complete')
+        logger.info(f'Waiting {len(self.pipeline.runs)} run(s) to complete')
         while executions:
             time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
             logger.info(f'Executions still running: {len(executions)}')
             for execution in executions:
                 if execution.is_finished():
                     executions.remove(execution)
-        logger.info(f'✅ All runs on pipeline {self.name} ({self.definition_id =}) had finished!')
+        logger.info(f'✅ All runs on pipeline {self.pipeline.pipeline_name} (definition_id = {self.pipeline.definition_id}) had finished!')
 
 
 class PipelineExecution:
     TIME_IN_SECONDS_TO_CHECK_STATUS = 10
 
-    def __init__(self,
-                 pipeline_name: str,
-                 pipeline_definition_id: str,
-                 branch_name: str,
-                 params: Dict):
-        self.pipeline_name = pipeline_name
-        self.pipeline_definition_id = pipeline_definition_id
-        self.branch_name = branch_name
+    def __init__(self, pipeline: Pipeline, params: Dict):
         self.params = params
-        self.manager = AzurePipelinesAPI(
-            name = self.pipeline_name,
-            definition_id = self.pipeline_definition_id,
-            branch_name = self.branch_name
-        )
+        self.pipeline_name = pipeline.pipeline_name
+        self.manager = AzurePipelinesAPI(pipeline = pipeline)
         self.run_info: RunInfo = None
 
     def start(self):
