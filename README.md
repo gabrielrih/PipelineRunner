@@ -43,12 +43,8 @@ parameters:
     displayName: Cluster Agent
     type: string
     values:
-      - aks-sharedservices-dev-scus-001
-      - aks-sharedservices-stg-brs-002
-      - aks-logco-dev-scus-001
-      - aks-brewtech-dev-scus-001
-      - aks-tecx-dev-scus-001
-
+      - aks-test-dev-scus-001
+      - aks-test-stg-scus-001
 ```
 
 > On the [examples](./examples/) folder you can see some example of configurations.
