@@ -1,4 +1,4 @@
-from src.pipeline.pipeline import Pipeline
+from src.pipeline.parser import Pipeline
 from src.config import DevOpsConfig
 from src.util.logger import Logger
 
