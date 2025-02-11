@@ -21,10 +21,10 @@
                 "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-logco-dev-scus-001" }
             },
             {
-                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-techops-dev-scus-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-las-dev-scus-001" }
             },
             {
-                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-las-dev-scus-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "dev", "AGENT": "aks-techops-dev-scus-001" }
             }
         ]
     }
