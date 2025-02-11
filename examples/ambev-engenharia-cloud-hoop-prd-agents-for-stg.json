@@ -6,13 +6,16 @@
         "branch_name": "main",
         "runs": [
             {
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-tecx-stg-brs-001" }
+            },
+            {
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-iris-stg-scus-001" }
             },
             {
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-functions-stg-brs-001" }
             },
             {
-                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-tecx-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-brewtech-stg-brs-001" }
             },
             {
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-techops-stg-brs-001" }
@@ -21,13 +24,10 @@
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-sharedservices-stg-brs-002" }
             },
             {
-                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-brewtech-stg-brs-001" }
+                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-logco-stg-brs-001" }
             },
             {
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-las-stg-brs-001" }
-            },
-            {
-                "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-logco-stg-brs-001" }
             }
         ]
     }
