@@ -93,7 +93,7 @@ Using the Terminal (without the virtualenv activated)
 
 ```ps1
 poetry build
-pip install --user .\dist\*.whl
+pip install --user .\dist\*.whl --force-reinstall
 ```
 
 By doing that a ```pipeline.exe``` file will be created probably on the folder: ```C:\Users\user\AppData\Roaming\Python\Python312\Scripts```. So, you must add this folder on the user PATH.
