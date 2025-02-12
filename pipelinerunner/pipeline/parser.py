@@ -1,8 +1,8 @@
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 
-from src.util.json import load_json_from_file
-from src.util.logger import Logger
+from pipelinerunner.util.json import load_json_from_file
+from pipelinerunner.util.logger import Logger
 
 
 logger = Logger.get_logger(__name__)

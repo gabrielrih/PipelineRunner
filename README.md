@@ -56,16 +56,53 @@ AZURE_DEVOPS_PERSONAL_ACCESS_TOKEN=my_personal_token_here
 AZURE_DEVOPS_ORGANIZATION_NAME=ORGANIZATION_NAME
 ```
 
-# Running it
+> Alternatively, you can set this variables as env vars on the user scope (on Windows or Linux).ss
 
-Finally, you can install the dependencies and run the automation.
+# Running it locally
 
-```sh
-poetry install --no-root
+Now you can install the dependencies and the package.
+
+```ps1
+poetry install
+```
+
+Finally, you can run the automation using poetry...
+
+```ps1
 poetry run python main.py --pipeline-file pipeline.json
 ```
 
-> Check python main.py help to see the optional parameters you could use.
+... or using the shorter defined on [pyproject.toml](./pyproject.toml).
+
+```ps1
+pipeline --pipeline-file pipeline.json
+```
+
+To check all the options you can use just run:
+```ps1
+pipeline --help
+```
+
+> The ```pipeline``` command here will work just locally.
+
+# Installing it globally
+
+The steps below are necessary to run the ```pipeline``` command anywhere on Windows.
+
+Using the Terminal (without the virtualenv activated)
+
+```ps1
+poetry build
+pip install --user .\dist\*.whl
+```
+
+By doing that a ```pipeline.exe``` file will be created probably on the folder: ```C:\Users\user\AppData\Roaming\Python\Python312\Scripts```. So, you must add this folder on the user PATH.
+
+Given that this automation uses env vars, you must create this variables are environment variables for the user, so you could run this script anywhere on Windows:
+
+```ps1
+pipeline --help
+```
 
 # Contribute
 

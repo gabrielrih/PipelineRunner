@@ -4,9 +4,9 @@ from enum import Enum
 from typing import List
 from abc import ABC, abstractmethod
 
-from src.pipeline.parser import Pipeline
-from src.pipeline.execution import PipelineExecution
-from src.util.logger import Logger
+from pipelinerunner.pipeline.parser import Pipeline
+from pipelinerunner.pipeline.execution import PipelineExecution
+from pipelinerunner.util.logger import Logger
 
 
 logger = Logger.get_logger(__name__)

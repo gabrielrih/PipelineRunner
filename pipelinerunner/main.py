@@ -1,6 +1,6 @@
-from src.pipeline.parser import Pipeline
-from src.runner import Mode, PipelineBatchRunner
-from src.util.logger import Logger
+from pipelinerunner.pipeline.parser import Pipeline
+from pipelinerunner.runner import Mode, PipelineBatchRunner
+from pipelinerunner.util.logger import Logger
 
 import click
 

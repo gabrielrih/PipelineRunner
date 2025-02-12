@@ -2,9 +2,9 @@ import time
 
 from typing import Dict
 
-from src.pipeline.parser import Pipeline
-from src.pipeline.api import AzurePipelinesAPI, RunInfo, RunStatus
-from src.util.logger import Logger
+from pipelinerunner.pipeline.parser import Pipeline
+from pipelinerunner.pipeline.api import AzurePipelinesAPI, RunInfo, RunStatus
+from pipelinerunner.util.logger import Logger
 
 
 logger = Logger.get_logger(__name__)
