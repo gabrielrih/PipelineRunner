@@ -58,42 +58,15 @@ AZURE_DEVOPS_ORGANIZATION_NAME=ORGANIZATION_NAME
 
 > Alternatively, you can set this variables as env vars on the user scope (on Windows or Linux).ss
 
-# Running it locally
-
-Now you can install the dependencies and the package.
-
-```ps1
-poetry install
-```
-
-Finally, you can run the automation using poetry...
-
-```ps1
-poetry run python .\pipelinerunner\main.py run --pipeline-file pipeline.json
-```
-
-... or using the shorter defined on [pyproject.toml](./pyproject.toml).
-
-```ps1
-pipeline run --pipeline-file pipeline.json
-```
-
-To check all the options you can use just run:
-```ps1
-pipeline --help
-```
-
-> The ```pipeline``` command here will work just locally.
-
-# Installing it globally
+# Installing it
 
 The steps below are necessary to run the ```pipeline``` command anywhere on Windows.
 
-Using the Terminal (without the virtualenv activated)
+Using the Terminal inside the current repo (without the virtualenv activated)
 
 ```ps1
 poetry build
-pip install --user .\dist\*.whl --force-reinstall
+pip install --user .\dist\*.whl
 ```
 
 By doing that a ```pipeline.exe``` file will be created probably on the folder: ```C:\Users\user\AppData\Roaming\Python\Python312\Scripts```. So, you must add this folder on the user PATH.
@@ -105,6 +78,18 @@ pipeline --help
 ```
 
 # Contribute
+
+To contribute with the development of this repo you could use poetry to control the dependencies.
+
+```ps1
+poetry install
+```
+
+To run the automation using poetry...
+
+```ps1
+poetry run python .\pipelinerunner\main.py run --pipeline-file pipeline.json
+```
 
 ## How to add packages on the project using Poetry
 ```sh

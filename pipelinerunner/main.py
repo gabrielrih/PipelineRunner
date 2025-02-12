@@ -10,7 +10,7 @@ from time import time
 logger = Logger.get_logger(__name__)
     
 @click.group
-def pipeline(): pass
+def main(): pass
 
 
 @click.command()
@@ -39,7 +39,7 @@ def create() -> None:
     ''' Creating a pipeline definition '''
     raise NotImplementedError('The config option are not implemented yet!')
 
-pipeline.add_command(run)
-pipeline.add_command(create)
+main.add_command(run)
+main.add_command(create)
 if __name__ == '__main__':
-    pipeline()
+    main()
