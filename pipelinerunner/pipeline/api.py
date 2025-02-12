@@ -1,6 +1,6 @@
-from src.pipeline.parser import Pipeline
-from src.config import DevOpsConfig
-from src.util.logger import Logger
+from pipelinerunner.pipeline.parser import Pipeline
+from pipelinerunner.config import DevOpsConfig
+from pipelinerunner.util.logger import Logger
 
 import base64
 import json
