@@ -69,13 +69,13 @@ poetry install
 Finally, you can run the automation using poetry...
 
 ```ps1
-poetry run python main.py --pipeline-file pipeline.json
+poetry run python .\pipelinerunner\main.py run --pipeline-file pipeline.json
 ```
 
 ... or using the shorter defined on [pyproject.toml](./pyproject.toml).
 
 ```ps1
-pipeline --pipeline-file pipeline.json
+pipeline run --pipeline-file pipeline.json
 ```
 
 To check all the options you can use just run:
