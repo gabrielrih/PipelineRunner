@@ -40,6 +40,9 @@
             },
             {
                 "parameters": { "AGENT_ENVIRONMENT": "prd", "AGENT":  "aks-las-prd-brs-001" }
+            },
+            {
+                "parameters": { "AGENT_ENVIRONMENT": "prd", "AGENT":  "abi-las-brs-prd-aks-cluster-2" }
             }
         ]
     }
