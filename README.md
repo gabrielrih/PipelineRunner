@@ -69,13 +69,13 @@ poetry install
 Finally, you can run the automation using poetry...
 
 ```ps1
-poetry run python main.py --pipeline-file pipeline.json
+poetry run python .\pipelinerunner\main.py run --pipeline-file pipeline.json
 ```
 
 ... or using the shorter defined on [pyproject.toml](./pyproject.toml).
 
 ```ps1
-pipeline --pipeline-file pipeline.json
+pipeline run --pipeline-file pipeline.json
 ```
 
 To check all the options you can use just run:
@@ -93,7 +93,7 @@ Using the Terminal (without the virtualenv activated)
 
 ```ps1
 poetry build
-pip install --user .\dist\*.whl
+pip install --user .\dist\*.whl --force-reinstall
 ```
 
 By doing that a ```pipeline.exe``` file will be created probably on the folder: ```C:\Users\user\AppData\Roaming\Python\Python312\Scripts```. So, you must add this folder on the user PATH.

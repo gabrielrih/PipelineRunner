@@ -1,6 +1,6 @@
 [project]
 name = "PipelineRunner"
-version = "0.1.0"
+version = "0.1.1"
 description = "It runs multiple Azure pipelines"
 authors = [
     {name = "Gabriel Richter",email = "gabrielrih@gmail.com"}
@@ -22,4 +22,4 @@ build-backend = "poetry.core.masonry.api"
 pytest = "^8.3.4"
 
 [tool.poetry.scripts]
-pipeline = "pipelinerunner.main:run"
+pipeline = "pipelinerunner.main:pipeline"
