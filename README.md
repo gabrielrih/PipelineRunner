@@ -1,5 +1,5 @@
 # PipelineRunner
-It automatically triggers multiple times pipelines on Azure.
+It automatically triggers multiple executions of Azure Pipelines.
 
 # Configuring it
 
