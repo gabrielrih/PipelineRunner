@@ -1,0 +1,56 @@
+# TO DO LIST
+
+- Estou trabalhando na criação de templates e salvando em um arquivo templates.json em disco.
+- Consegui criar os templates já de forma interativa, agora fazer via linha de comando.
+- No cadastro iterativo, se já tiver o nome, pedir se o usuário quer escolher outr.
+
+
+# Novo comando para criar JSON
+
+## Criar template
+pipeline template list
+pipeline template show hoop-agents
+pipeline template create (interativo)
+    ou
+pipeline template create --interactive
+
+pipeline template create \
+  --name simple-deploy \
+  --description "Simple deployment" \
+  --param "ENV:string:required:options=dev,prd"
+
+pipeline template create \
+  --name complex-deploy \
+  --description "Complex deployment template" \
+  --param "ENVIRONMENT:string:required:default=dev:options=dev,stg,prd" \
+  --param "CLUSTER:string:required" \
+  --param "VERSION:string:optional:default=latest" \
+  --param "REPLICAS:number:optional:default=3" \
+  --param "DEBUG:boolean:optional:default=false"
+
+pipeline template delete hoop-agents
+
+## Criar execution de forma iterativa
+pipeline execution create
+    ou
+pipeline execution create --interactive
+
+## Criar execution via parâmetros
+pipeline execution create \
+    --template "hoop-agents" \
+    --project "PROJETO" \
+    --definition-id 12345 \
+    --pipeline-name "minha-pipeline" \
+    --branch "main" \
+    --run "PARAM1=valor1,PARAM2=valor2" \
+    --run "PARAM1=valor3,PARAM2=valor4" \
+    --output pipeline.json
+
+## Adicionar runs a um arquivo existente de uma execution
+pipeline execution edit --file pipeline.json (interativo)
+pipeline execution edit --file pipeline.json --add-run "PARAM1=valor1,PARAM2=valor2"
+pipeline execution edit --file pipeline.json --remove-run 3
+pipeline execution edit --file pipeline.json --set-branch develop
+
+## Validar se o JSON está no formato correto
+pipeline execution validate --file pipeline.json

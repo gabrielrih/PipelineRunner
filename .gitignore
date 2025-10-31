@@ -1,3 +1,6 @@
+# PUT HERE the temp pipelines
+pipelines
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
