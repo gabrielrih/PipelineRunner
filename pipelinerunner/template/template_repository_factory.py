@@ -7,7 +7,5 @@ from pipelinerunner.template.template_repository_on_disk import TemplateReposito
 class TemplateRepositoryFactory:
     @staticmethod
     def create() -> BaseTemplateRepository:
-        path = Path.home() / '.pipelinerunner'
-        path.mkdir(parents=True, exist_ok=True)
-        file_path = path / 'templates.json'
-        return TemplateRepositoryOnDisk(file_path)
+        path = Path.home() / '.pipelinerunner' / 'templates'
+        return TemplateRepositoryOnDisk(path)

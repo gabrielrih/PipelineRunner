@@ -19,6 +19,7 @@ def list_all_templates() -> None:
     repository = TemplateRepositoryFactory.create()
     templates: List[TemplateModel] = repository.get_all()
     click.echo(templates)
+    click.echo(f'{len(templates)} templates was found!')
 
 
 @template.command(name="show")
@@ -35,6 +36,21 @@ def show_template(name: str) -> None:
         return
     click.echo(f'No template found using name "{name}"')
 
+
+
+@template.command(name="edit")
+@click.option('--name',
+              type = click.STRING,
+              required = True,
+              help = 'Template name')
+def edit_template(name: str) -> None:
+    ''' Edit template '''
+    repository = TemplateRepositoryFactory.create()
+    # deleted: bool = repository.get(name)
+    # if deleted:
+    #     click.echo(f'The template "{name}" was deleted!')
+    #     return
+    # click.echo(f'No template found using name "{name}"')
 
 @template.command(name="delete")
 @click.option('--name',
@@ -80,9 +96,6 @@ def create(name: str, description: str, params: List[str], interactive: bool):
 
 
 def create_interactive():
-    """Create a new pipeline template interactively"""
-    click.echo("📝 Creating new template\n")
-    
     # Showing the existent templates
     repository = TemplateRepositoryFactory.create()
     existing_templates = repository.get_all()
@@ -92,27 +105,27 @@ def create_interactive():
         click.echo(f"📋 Existing templates: {existing_templates_names}")
         click.echo()
 
+    click.echo("📝 Creating new template\n")
+
     # Getting an unique template name
     while True:
         name = click.prompt("Template name")
         
-        if name in existing_templates_names:
+        if repository.exists(name):
             click.echo(f"⚠️  Template '{name}' already exists!")
             if not click.confirm("Choose a different name?", default=True):
                 click.echo("❌ Template creation cancelled.")
                 return
             continue
             
-        break  # the name is unique
+        break  # when the name is unique
 
-    # Basic info
     description = click.prompt("Description")
     
-    click.echo("\nNow let's define the parameter schema...\n")
-    
+    click.echo("\nNow let's define the parameter schema...\n")    
     parameters = list()
     param_count = 1
-    
+
     while True:
         click.echo("━" * 45)
         click.echo(f"\nParameter #{param_count}:")

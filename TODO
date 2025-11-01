@@ -3,6 +3,8 @@
 - Estou trabalhando na criação de templates e salvando em um arquivo templates.json em disco.
 - Consegui criar os templates já de forma interativa, agora fazer via linha de comando.
 - No cadastro iterativo, se já tiver o nome, pedir se o usuário quer escolher outr.
+- Mudar de jsn para yaml.
+- Vlidar nme d template send utilizad (nme d arquiv)
 
 
 # Novo comando para criar JSON
@@ -30,13 +32,13 @@ pipeline template create \
 
 pipeline template delete hoop-agents
 
-## Criar execution de forma iterativa
-pipeline execution create
+## Criar runner de forma iterativa
+pipeline runner create
     ou
-pipeline execution create --interactive
+pipeline runner create --interactive
 
-## Criar execution via parâmetros
-pipeline execution create \
+## Criar runner via parâmetros
+pipeline runner create \
     --template "hoop-agents" \
     --project "PROJETO" \
     --definition-id 12345 \
@@ -46,11 +48,11 @@ pipeline execution create \
     --run "PARAM1=valor3,PARAM2=valor4" \
     --output pipeline.json
 
-## Adicionar runs a um arquivo existente de uma execution
-pipeline execution edit --file pipeline.json (interativo)
-pipeline execution edit --file pipeline.json --add-run "PARAM1=valor1,PARAM2=valor2"
-pipeline execution edit --file pipeline.json --remove-run 3
-pipeline execution edit --file pipeline.json --set-branch develop
+## Adicionar runs a um arquivo existente de um runner
+pipeline runner edit --file pipeline.json (interativo)
+pipeline runner edit --file pipeline.json --add-run "PARAM1=valor1,PARAM2=valor2"
+pipeline runner edit --file pipeline.json --remove-run 3
+pipeline runner edit --file pipeline.json --set-branch develop
 
 ## Validar se o JSON está no formato correto
-pipeline execution validate --file pipeline.json
+pipeline runner validate --file pipeline.json
