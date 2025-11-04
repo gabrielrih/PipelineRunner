@@ -3,7 +3,7 @@
         "project_name": "AMBEV-ENGENHARIA-CLOUD-TOOLS",
         "definition_id": 17845,
         "pipeline_name": "ambev-engenharia-cloud-hoop-prd-agents",
-        "branch_name": "main",
+        "branch_name": "admin",
         "runs": [
             {
                 "parameters": { "AGENT_ENVIRONMENT": "stg", "AGENT":  "aks-tecx-stg-brs-001" }
