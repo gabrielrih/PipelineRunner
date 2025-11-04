@@ -6,6 +6,6 @@ from pipelinerunner.template.parameter_model import TemplateParameter
 
 @dataclass
 class TemplateModel:
-    name: str
+    name: str   # immutable
     description: str
     parameters: Optional[List[TemplateParameter]] = None

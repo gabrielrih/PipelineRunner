@@ -9,7 +9,7 @@ from pipelinerunner.template.parameter_model import TemplateParameter, TemplateP
 
 @click.group()
 def template():
-    ''' Execution templates '''
+    ''' Templates '''
     pass
 
 
@@ -23,10 +23,7 @@ def list_all_templates() -> None:
 
 
 @template.command(name="show")
-@click.option('--name',
-              type = click.STRING,
-              required = True,
-              help = 'Template name')
+@click.argument('name', type = click.STRING)
 def show_template(name: str) -> None:
     ''' Show template '''
     repository = TemplateRepositoryFactory.create()
@@ -37,26 +34,30 @@ def show_template(name: str) -> None:
     click.echo(f'No template found using name "{name}"')
 
 
-
-@template.command(name="edit")
-@click.option('--name',
+@template.command(name="update")
+@click.argument('name', type = click.STRING)
+@click.option('--set-description',
               type = click.STRING,
               required = True,
-              help = 'Template name')
-def edit_template(name: str) -> None:
-    ''' Edit template '''
+              help = 'New description')
+def update_template(name: str, set_description: str) -> None:
+    ''' Update template '''
     repository = TemplateRepositoryFactory.create()
-    # deleted: bool = repository.get(name)
-    # if deleted:
-    #     click.echo(f'The template "{name}" was deleted!')
-    #     return
-    # click.echo(f'No template found using name "{name}"')
+    template: TemplateModel = repository.get(name)
+    if not template:
+        click.echo(f'No template found using name "{name}"')
+        return
+
+    template.description = set_description
+    updated: bool = repository.update(name, template)
+    if updated:
+        click.echo(f'The description of template "{name}" was updated!')
+        return
+    click.echo(f'Failed when updating template "{name}"')
+
 
 @template.command(name="delete")
-@click.option('--name',
-              type = click.STRING,
-              required = True,
-              help = 'Template name')
+@click.argument('name', type = click.STRING)
 def delete_template(name: str) -> None:
     ''' Delete template '''
     repository = TemplateRepositoryFactory.create()
@@ -199,3 +200,5 @@ def create_interactive():
 # TO DO
 def create_from_cli(name: str, description: str, params: List[str]):
     click.echo(f'Creating template using this parameters: {locals()}')
+    raise NotImplementedError('This option was not implemented yet!')
+

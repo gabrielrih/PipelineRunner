@@ -1,37 +1,5 @@
 # TO DO LIST
 
-- Estou trabalhando na criação de templates e salvando em um arquivo templates.json em disco.
-- Consegui criar os templates já de forma interativa, agora fazer via linha de comando.
-- No cadastro iterativo, se já tiver o nome, pedir se o usuário quer escolher outr.
-- Mudar de jsn para yaml.
-- Vlidar nme d template send utilizad (nme d arquiv)
-
-
-# Novo comando para criar JSON
-
-## Criar template
-pipeline template list
-pipeline template show hoop-agents
-pipeline template create (interativo)
-    ou
-pipeline template create --interactive
-
-pipeline template create \
-  --name simple-deploy \
-  --description "Simple deployment" \
-  --param "ENV:string:required:options=dev,prd"
-
-pipeline template create \
-  --name complex-deploy \
-  --description "Complex deployment template" \
-  --param "ENVIRONMENT:string:required:default=dev:options=dev,stg,prd" \
-  --param "CLUSTER:string:required" \
-  --param "VERSION:string:optional:default=latest" \
-  --param "REPLICAS:number:optional:default=3" \
-  --param "DEBUG:boolean:optional:default=false"
-
-pipeline template delete hoop-agents
-
 ## Criar runner de forma iterativa
 pipeline runner create
     ou

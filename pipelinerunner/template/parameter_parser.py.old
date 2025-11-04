@@ -2,7 +2,6 @@ from typing import List
 
 from pipelinerunner.template.parameter_model import (
     TemplateParameter,
-    TemplateParameterRequired,
     TemplateParameterType
 )
 
