@@ -218,3 +218,5 @@ def create_interactive():
 
 def create_from_cli(template_name: str):
     raise NotImplementedError('This option was not implemented yet!')
+
+

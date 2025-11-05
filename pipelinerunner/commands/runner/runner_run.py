@@ -26,24 +26,28 @@ logger = Logger.get_logger(__name__)
               required = False,
               default = PipelineExecutionMode.PARALLEL.value,
               help = PipelineExecutionMode.get_help_message())
+@click.option('--no-wait',
+              is_flag = True,
+              default = False,
+              help='Do not wait for pipeline completion (fire and forget)')
 @click.option('--dry-run',
               is_flag = True,
               default = False,
               help = 'Dry run')
-def run(name: str, from_file: str, mode: str, dry_run: bool):
+def run(name: str, from_file: str, mode: str, no_wait: bool, dry_run: bool):
     ''' Start a runner '''
     if not name and not from_file:
         click.echo('Incomplete arguments provided. Use the --from-file or provide the name argument')
         return
     
     if name:
-        return run_using_runner(runner_name = name, mode = mode, dry_run = dry_run)
+        return run_using_runner(runner_name = name, mode = mode, no_wait = no_wait, dry_run = dry_run)
     
-    return run_from_file(filename = from_file, mode = mode, dry_run = dry_run)
+    return run_from_file(filename = from_file, mode = mode, no_wait = no_wait, dry_run = dry_run)
 
 
 @measure_time
-def run_using_runner(runner_name: str, mode: str, dry_run: bool):
+def run_using_runner(runner_name: str, mode: str, no_wait: bool, dry_run: bool):
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name = runner_name)
     if not runner:
@@ -51,11 +55,11 @@ def run_using_runner(runner_name: str, mode: str, dry_run: bool):
         return
     
     logger.info(f'Starting single runner: {runner.name}')
-    _execute_runners([ runner ], mode, dry_run)
+    _execute_runners([ runner ], mode, no_wait, dry_run)
 
 
 @measure_time
-def run_from_file(filename: str, mode: str, dry_run: bool):
+def run_from_file(filename: str, mode: str, no_wait: bool, dry_run: bool):
     click.echo(f'Loading runners from {filename}')
     data: Union[Dict, List[Dict]] = load_json_from_file(filename)
 
@@ -67,9 +71,10 @@ def run_from_file(filename: str, mode: str, dry_run: bool):
     for r in runners:
         click.echo(f"  - {r.name} (project: {r.project_name}, pipeline: {r.pipeline_name}, branch: {r.branch_name})")
 
-    _execute_runners(runners, mode, dry_run)
+    _execute_runners(runners, mode, no_wait, dry_run)
 
 
-def _execute_runners(runners: List[RunnerModel], mode: str, dry_run: bool):
-    executor = PipelineBatchExecutor(runners, mode, dry_run)
+def _execute_runners(runners: List[RunnerModel], mode: str, no_wait: bool, dry_run: bool):
+    wait: bool = not no_wait
+    executor = PipelineBatchExecutor(runners, mode, wait, dry_run)
     executor.run_all()
