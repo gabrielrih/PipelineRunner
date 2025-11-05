@@ -1,5 +1,6 @@
 [
     {
+        "name": "hoop-prd-agents-for-dev",
         "project_name": "AMBEV-ENGENHARIA-CLOUD-TOOLS",
         "definition_id": 17845,
         "pipeline_name": "ambev-engenharia-cloud-hoop-prd-agents",

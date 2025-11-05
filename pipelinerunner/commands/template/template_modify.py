@@ -1,40 +1,13 @@
 import click
 
-from typing import List, Optional
+from typing import List
 
 from pipelinerunner.template.template_repository_factory import TemplateRepositoryFactory
 from pipelinerunner.template.template_model import TemplateModel
 from pipelinerunner.template.parameter_model import TemplateParameter, TemplateParameterType
 
 
-@click.group()
-def template():
-    ''' Templates '''
-    pass
-
-
-@template.command(name="list")
-def list_all_templates() -> None:
-    ''' List all templates '''
-    repository = TemplateRepositoryFactory.create()
-    templates: List[TemplateModel] = repository.get_all()
-    click.echo(templates)
-    click.echo(f'{len(templates)} templates was found!')
-
-
-@template.command(name="show")
-@click.argument('name', type = click.STRING)
-def show_template(name: str) -> None:
-    ''' Show template '''
-    repository = TemplateRepositoryFactory.create()
-    template: Optional[TemplateModel] = repository.get(name)
-    if template:
-        click.echo(template)
-        return
-    click.echo(f'No template found using name "{name}"')
-
-
-@template.command(name="update")
+@click.command(name = "update")
 @click.argument('name', type = click.STRING)
 @click.option('--set-description',
               type = click.STRING,
@@ -56,7 +29,7 @@ def update_template(name: str, set_description: str) -> None:
     click.echo(f'Failed when updating template "{name}"')
 
 
-@template.command(name="delete")
+@click.command(name = 'delete')
 @click.argument('name', type = click.STRING)
 def delete_template(name: str) -> None:
     ''' Delete template '''
@@ -68,7 +41,7 @@ def delete_template(name: str) -> None:
     click.echo(f'No template found using name "{name}"')
 
 
-@template.command()
+@click.command(name = 'create')
 @click.option('--name',
               type = click.STRING,
               help = 'Template name')
@@ -84,7 +57,7 @@ def delete_template(name: str) -> None:
               is_flag = True,
               default = False,
               help = 'Force interactive mode')
-def create(name: str, description: str, params: List[str], interactive: bool):
+def create_template(name: str, description: str, params: List[str], interactive: bool):
     ''' Create template'''
     if interactive:
         return create_interactive()
@@ -110,7 +83,7 @@ def create_interactive():
 
     # Getting an unique template name
     while True:
-        name = click.prompt("Template name")
+        name = click.prompt("Unique template name")
         
         if repository.exists(name):
             click.echo(f"⚠️  Template '{name}' already exists!")
