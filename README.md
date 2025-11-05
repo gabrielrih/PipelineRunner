@@ -2,7 +2,6 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.2-orange.svg)](https://github.com/gabrielrih/PipelineRunner)
 
 A powerful CLI tool for triggering and managing Azure DevOps Pipeline executions in batch. Automate multiple pipeline runs with different parameters, manage execution templates, and streamline your CI/CD workflows.
 
