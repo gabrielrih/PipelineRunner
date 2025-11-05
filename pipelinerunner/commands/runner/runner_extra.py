@@ -4,7 +4,7 @@ from typing import Optional
 from pathlib import Path
 from typing import Union, Dict, List
 
-from pipelinerunner.runner.runner_repository_factory import RunnerRepositoryFactory
+from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.runner.runner_serializer import RunnerSerializer
 from pipelinerunner.runner.runner_model import RunnerModel
 from pipelinerunner.util.json import write_json_on_file, load_json_from_file
