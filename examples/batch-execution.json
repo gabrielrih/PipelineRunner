@@ -1,0 +1,40 @@
+[
+  {
+    "name": "backend-deployment",
+    "project_name": "MyProject",
+    "definition_id": "12345",
+    "pipeline_name": "backend-pipeline",
+    "branch_name": "main",
+    "runs": [
+      {
+        "parameters": {
+          "SERVICE": "api",
+          "ENVIRONMENT": "dev",
+          "VERSION": "v2.0.0"
+        }
+      },
+      {
+        "parameters": {
+          "SERVICE": "worker",
+          "ENVIRONMENT": "dev",
+          "VERSION": "v2.0.0"
+        }
+      }
+    ]
+  },
+  {
+    "name": "frontend-deployment",
+    "project_name": "MyProject",
+    "definition_id": "67890",
+    "pipeline_name": "frontend-pipeline",
+    "branch_name": "main",
+    "runs": [
+      {
+        "parameters": {
+          "ENVIRONMENT": "dev",
+          "VERSION": "v1.5.0"
+        }
+      }
+    ]
+  }
+]

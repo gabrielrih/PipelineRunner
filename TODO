@@ -1,9 +1,0 @@
-# Documentação
-Especificar na doc que tem várias formas de usar a ferramenta.
-A forma reutilizável é criar um template, o runner e trigar as execuções a partir desse runner cadastrado.
-
-Mas também tem a opção de criar um JSON manualmente e triggar usando esse JSON com o comando:
-pipeline runner run --from-file my.json
-
-Importante validar o JSON antes de executar:
-pipeline runner validate --file my.json

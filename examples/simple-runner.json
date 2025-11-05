@@ -1,0 +1,16 @@
+{
+  "name": "simple-deployment",
+  "project_name": "MyProject",
+  "definition_id": "12345",
+  "pipeline_name": "my-pipeline",
+  "branch_name": "main",
+  "runs": [
+    {
+      "parameters": {
+        "ENVIRONMENT": "dev",
+        "VERSION": "v1.0.0",
+        "ENABLE_TESTS": "true"
+      }
+    }
+  ]
+}

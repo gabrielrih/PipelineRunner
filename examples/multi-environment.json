@@ -1,0 +1,27 @@
+{
+  "name": "multi-env-deployment",
+  "project_name": "MyProject",
+  "definition_id": "12345",
+  "pipeline_name": "deployment-pipeline",
+  "branch_name": "main",
+  "runs": [
+    {
+      "parameters": {
+        "ENVIRONMENT": "dev",
+        "VERSION": "v1.2.3"
+      }
+    },
+    {
+      "parameters": {
+        "ENVIRONMENT": "stg",
+        "VERSION": "v1.2.3"
+      }
+    },
+    {
+      "parameters": {
+        "ENVIRONMENT": "prd",
+        "VERSION": "v1.2.3"
+      }
+    }
+  ]
+}
