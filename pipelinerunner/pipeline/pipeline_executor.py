@@ -27,7 +27,7 @@ class SequentialPipelineExecutor(BasePipelineExecutor):
         super().__init__(runner, wait, dry_run)
 
     def run(self):
-        logger.info(f'Starting sequentially {len(self.runner.runs)} runs on pipeline {self.runner.pipeline_name} (definition_id = {self.runner.definition_id})')
+        logger.info(f'Starting sequentially {len(self.runner.runs)} runs on pipeline "{self.runner.project_name}/{self.runner.pipeline_name}" using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})')
 
         for run in self.runner.runs:
             execution = PipelineExecution(self.runner, run.parameters, self.dry_run)
@@ -42,7 +42,7 @@ class ParallelPipelineExecutor(BasePipelineExecutor):
         super().__init__(runner, wait, dry_run)
 
     def run(self):
-        logger.info(f'Starting at once {len(self.runner.runs)} runs on pipeline {self.runner.pipeline_name} (definition_id = {self.runner.definition_id})')
+        logger.info(f'Starting at once {len(self.runner.runs)} runs on pipeline "{self.runner.project_name}/{self.runner.pipeline_name}" using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})')
         executions = list()
         for run in self.runner.runs:
             execution = PipelineExecution(self.runner, run.parameters, self.dry_run)
