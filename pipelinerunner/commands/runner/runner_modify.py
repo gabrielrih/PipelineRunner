@@ -1,9 +1,72 @@
 import click
 
+from typing import Optional
+
 from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.runner.runner_model import RunnerModel, RunModel
 from pipelinerunner.template.template_repository import TemplateRepositoryFactory
 from pipelinerunner.template.parameter_model import TemplateParameterType
+
+
+@click.command(name = 'update')
+@click.argument('name', type = click.STRING)
+@click.option("--set-project-name", type=click.STRING, required = False, help="Update the project name")
+@click.option("--set-definition-id", type=click.STRING, required = False,  help="Update the definition ID")
+@click.option("--set-pipeline-name", type=click.STRING, required = False,  help="Update the pipeline name")
+@click.option("--set-branch-name", type=click.STRING, required = False,  help="Update the branch name")
+def update_runner(name: str,
+                  set_project_name: Optional[str],
+                  set_definition_id: Optional[str],
+                  set_pipeline_name: Optional[str],
+                  set_branch_name: Optional[str]) -> None:
+    ''' Update runner '''
+    repository = RunnerRepositoryFactory.create()
+    runner: Optional[RunnerModel] = repository.get(name)
+    if not runner:
+        click.echo(f'No runner found using the name "{name}"')
+        return
+
+    updates = []
+    if set_project_name:
+        updates.append(("project_name", runner.project_name, set_project_name))
+        runner.project_name = set_project_name
+
+    if set_definition_id:
+        updates.append(("definition_id", runner.definition_id, set_definition_id))
+        runner.definition_id = set_definition_id
+
+    if set_pipeline_name:
+        updates.append(("pipeline_name", runner.pipeline_name, set_pipeline_name))
+        runner.pipeline_name = set_pipeline_name
+
+    if set_branch_name:
+        updates.append(("branch_name", runner.branch_name, set_branch_name))
+        runner.branch_name = set_branch_name
+
+    if not updates:
+        click.echo("⚠️  No fields to update. Use one or more --set-* options.")
+        return
+
+    updated: bool = repository.update(name, runner)
+    if not updated:
+        click.echo(f'❌ Failed to update runner "{name}"')
+        return
+    click.echo('Changes:')
+    for field, old, new in updates:
+        click.echo(f'   - {field}: "{old}" → "{new}"')
+    click.echo(f'✅ Runner "{name}" updated successfully:')
+
+
+@click.command(name = 'delete')
+@click.argument('name', type = click.STRING)
+def delete_runner(name: str) -> None:
+    ''' Delete runner '''
+    repository = RunnerRepositoryFactory.create()
+    deleted: bool = repository.remove(name)
+    if deleted:
+        click.echo(f'The runner "{name}" was deleted!')
+        return
+    click.echo(f'No runner found using the name "{name}"')
 
 
 @click.command(name="create")

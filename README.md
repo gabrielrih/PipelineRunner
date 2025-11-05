@@ -282,6 +282,9 @@ pipeline runner show <runner-name>
 # Create runner interactively
 pipeline runner create --interactive
 
+# Update runner
+pipeline runner update <runner-name> --set-project-name <project-name> --set-definition-id <definition-id> --set-pipeline-name <pipeline-name> --set-branch-name <branch-name>
+
 # Run a saved runner
 pipeline runner run <runner-name>
 
