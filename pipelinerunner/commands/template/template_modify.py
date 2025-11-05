@@ -18,7 +18,7 @@ def update_template(name: str, set_description: str) -> None:
     repository = TemplateRepositoryFactory.create()
     template: TemplateModel = repository.get(name)
     if not template:
-        click.echo(f'No template found using name "{name}"')
+        click.echo(f'No template found using the name "{name}"')
         return
 
     template.description = set_description
@@ -38,7 +38,7 @@ def delete_template(name: str) -> None:
     if deleted:
         click.echo(f'The template "{name}" was deleted!')
         return
-    click.echo(f'No template found using name "{name}"')
+    click.echo(f'No template found using the name "{name}"')
 
 
 @click.command(name = 'create')
