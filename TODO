@@ -1,26 +1,9 @@
-# TO DO LIST
+# Documentação
+Especificar na doc que tem várias formas de usar a ferramenta.
+A forma reutilizável é criar um template, o runner e trigar as execuções a partir desse runner cadastrado.
 
-## Criar runner de forma iterativa
-pipeline runner create
-    ou
-pipeline runner create --interactive
+Mas também tem a opção de criar um JSON manualmente e triggar usando esse JSON com o comando:
+pipeline runner run --from-file my.json
 
-## Criar runner via parâmetros
-pipeline runner create \
-    --template "hoop-agents" \
-    --project "PROJETO" \
-    --definition-id 12345 \
-    --pipeline-name "minha-pipeline" \
-    --branch "main" \
-    --run "PARAM1=valor1,PARAM2=valor2" \
-    --run "PARAM1=valor3,PARAM2=valor4" \
-    --output pipeline.json
-
-## Adicionar runs a um arquivo existente de um runner
-pipeline runner edit --file pipeline.json (interativo)
-pipeline runner edit --file pipeline.json --add-run "PARAM1=valor1,PARAM2=valor2"
-pipeline runner edit --file pipeline.json --remove-run 3
-pipeline runner edit --file pipeline.json --set-branch develop
-
-## Validar se o JSON está no formato correto
-pipeline runner validate --file pipeline.json
+Importante validar o JSON antes de executar:
+pipeline runner validate --file my.json
