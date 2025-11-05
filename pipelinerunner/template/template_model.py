@@ -15,7 +15,7 @@ class TemplateModel:
         param_count = len(self.parameters) if self.parameters else 0
         parameter_names = [ parameter.name for parameter in self.parameters ]
         return (
-            f'Template {self.name} -> Description: {self.description}, '
+            f'Template "{self.name}" -> Description: {self.description}, '
             f'Parameters: {parameter_names} '
             f'({param_count} parameters)'
         )
