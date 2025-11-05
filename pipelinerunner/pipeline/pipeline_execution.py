@@ -19,12 +19,15 @@ logger = Logger.get_logger(__name__)
 class PipelineExecution:
     TIME_IN_SECONDS_TO_CHECK_STATUS = 10
 
-    def __init__(self, runner: RunnerModel, params: Dict, dry_run: bool = False):
+    def __init__(self,
+                 runner: RunnerModel,
+                 params: Dict,
+                 dry_run: bool = False):
         self.params = params
+        self.dry_run = dry_run
         self.runner_name = runner.pipeline_name
         self.api: BasePipelineAPI = DryRunPipelineAPI(runner) if dry_run else AzurePipelineAPI(runner)
         self.run_info: AzurePipelineRunInfo = None
-        self.dry_run = dry_run
 
     def start(self):
         if self.run_info:
