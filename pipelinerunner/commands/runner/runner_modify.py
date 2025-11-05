@@ -1,8 +1,8 @@
 import click
 
-from pipelinerunner.runner.runner_repository_factory import RunnerRepositoryFactory
+from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.runner.runner_model import RunnerModel, RunModel
-from pipelinerunner.template.template_repository_factory import TemplateRepositoryFactory
+from pipelinerunner.template.template_repository import TemplateRepositoryFactory
 from pipelinerunner.template.parameter_model import TemplateParameterType
 
 

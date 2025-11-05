@@ -1,25 +1,26 @@
+from abc import ABC
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar
 
-
-from pipelinerunner.runner.runner_repository import BaseRunnerRepository
-from pipelinerunner.runner.runner_model import RunnerModel
-from pipelinerunner.runner.runner_serializer import RunnerSerializer
+from pipelinerunner.repository.base import BaseOnDiskRepository
 from pipelinerunner.util.json import load_json_from_file, write_json_on_file
 
 
-class RunnerRepositoryOnDisk(BaseRunnerRepository):
-    def __init__(self, runners_dir: Path):
-        self.serializer = RunnerSerializer()
-        self.runners_dir = runners_dir
+T = TypeVar("T")
+
+
+class OnDiskRepository(BaseOnDiskRepository[T], ABC):
+    def __init__(self, directory: Path, serializer: Type):
+        self.directory = directory
+        self.serializer = serializer
         self.initialize()
 
     def initialize(self) -> None:
-        if not self.runners_dir.exists():
-            self.runners_dir.mkdir(parents=True, exist_ok=True)
+        if not self.directory.exists():
+            self.directory.mkdir(parents = True, exist_ok = True)
 
-    def get(self, name: str) -> Optional[RunnerModel]:
-        file_path = self._get_runner_file_path(name)
+    def get(self, name: str) -> Optional[T]:
+        file_path = self._get_file_path(name)
         
         if not file_path.exists():
             return None
@@ -31,49 +32,49 @@ class RunnerRepositoryOnDisk(BaseRunnerRepository):
             # Log error if needed
             return None
 
-    def _get_runner_file_path(self, name: str) -> Path:
+    def _get_file_path(self, name: str) -> Path:
         # Sanitize filename to avoid issues with special characters
         safe_name = name.replace('/', '_').replace('\\', '_')
-        return self.runners_dir / f"{safe_name}.json"
+        return self.directory / f"{safe_name}.json"
 
-    def get_all(self) -> List[RunnerModel]:
-        templates = []
+    def get_all(self) -> List[T]:
+        data = []
         
-        for file_path in self.runners_dir.glob("*.json"):
+        for file_path in self.directory.glob("*.json"):
             try:
                 content = load_json_from_file(file_path)
-                template = self.serializer.deserialize(content)
-                templates.append(template)
+                data.append(
+                    self.serializer.deserialize(content)
+                )
             except Exception as e:
                 # Log error and skip invalid files
                 continue
         
-        return templates
+        return data
 
-    def add(self, runner: RunnerModel) -> bool:
-        file_path = self._get_runner_file_path(runner.name)
+    def add(self, content: T) -> bool:
+        file_path = self._get_file_path(content.name)
         
-        # Check if template already exists
         if file_path.exists():
             return False
         
         try:
-            content = self.serializer.serialize(runner)
-            write_json_on_file(content, file_path)
+            data = self.serializer.serialize(content)
+            write_json_on_file(data, file_path)
             return True
         except Exception as e:
             # Log error if needed
             return False
 
-    def update(self, name: str, runner: RunnerModel) -> bool:
-        old_file_path = self._get_runner_file_path(name)
+    def update(self, name: str, content: T) -> bool:
+        old_file_path = self._get_file_path(name)
         
         if not old_file_path.exists():
             return False
         
         try:
-            new_file_path = self._get_runner_file_path(runner.name)  # the name can change
-            content = self.serializer.serialize(runner)
+            new_file_path = self._get_file_path(content.name)  # the name can change
+            content = self.serializer.serialize(content)
             write_json_on_file(content, new_file_path)
             # If name changed, remove old file
             if old_file_path != new_file_path:
@@ -84,7 +85,7 @@ class RunnerRepositoryOnDisk(BaseRunnerRepository):
             return False
 
     def remove(self, name: str) -> bool:
-        file_path = self._get_runner_file_path(name)
+        file_path = self._get_file_path(name)
         
         if not file_path.exists():
             return False
@@ -97,5 +98,5 @@ class RunnerRepositoryOnDisk(BaseRunnerRepository):
             return False
 
     def exists(self, name: str) -> bool:
-        file_path = self._get_runner_file_path(name)
+        file_path = self._get_file_path(name)
         return file_path.exists()

@@ -2,7 +2,7 @@ import click
 
 from typing import List
 
-from pipelinerunner.template.template_repository_factory import TemplateRepositoryFactory
+from pipelinerunner.template.template_repository import TemplateRepositoryFactory
 from pipelinerunner.template.template_model import TemplateModel
 from pipelinerunner.template.parameter_model import TemplateParameter, TemplateParameterType
 

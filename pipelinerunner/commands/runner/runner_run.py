@@ -1,13 +1,12 @@
 import click
 
-from time import time
 from typing import Dict, List, Union, Optional
 
 from pipelinerunner.pipeline.pipeline_batch import PipelineBatchExecutor
 from pipelinerunner.pipeline.pipeline_mode import PipelineExecutionMode
 from pipelinerunner.runner.runner_model import RunnerModel
 from pipelinerunner.runner.runner_serializer import RunnerSerializer
-from pipelinerunner.runner.runner_repository_factory import RunnerRepositoryFactory
+from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.util.json import load_json_from_file
 from pipelinerunner.util.measure_time import measure_time
 from pipelinerunner.util.logger import Logger
