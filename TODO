@@ -11,7 +11,9 @@ commands:
 ## template
 tamplate_model.py: PENDENTE
 commands:
-    template_modify.py: PENDENTE
+    template_modify.py:
+        update e delete: OK
+        create interactive: PENDENTE
     template_show.py: OK
 
 

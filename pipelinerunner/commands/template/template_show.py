@@ -48,7 +48,7 @@ def show_template(name: str) -> None:
     repository = TemplateRepositoryFactory.create()
     template: Optional[TemplateModel] = repository.get(name)
     if not template:
-        logger.error(f'No template found using name "{name}"')
+        logger.error(f'No template found using the name "{name}"')
         return
     logger.info(f'Showing template "{name}"')
     logger.print_json(content = template.to_dict())

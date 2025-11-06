@@ -5,6 +5,10 @@ from typing import List
 from pipelinerunner.template.template_repository import TemplateRepositoryFactory
 from pipelinerunner.template.template_model import TemplateModel
 from pipelinerunner.template.parameter_model import TemplateParameter, TemplateParameterType
+from pipelinerunner.util.logger import BetterLogger
+
+
+logger = BetterLogger.get_logger(__name__)
 
 
 @click.command(name = "update")
@@ -18,15 +22,15 @@ def update_template(name: str, set_description: str) -> None:
     repository = TemplateRepositoryFactory.create()
     template: TemplateModel = repository.get(name)
     if not template:
-        click.echo(f'No template found using the name "{name}"')
+        logger.warning(f'No template found using the name "{name}"')
         return
 
     template.description = set_description
     updated: bool = repository.update(name, template)
-    if updated:
-        click.echo(f'The description of template "{name}" was updated!')
+    if not updated:
+        logger.error(f'Failed when updating template "{name}"')
         return
-    click.echo(f'Failed when updating template "{name}"')
+    logger.success(f'The description of template "{name}" was updated!')
 
 
 @click.command(name = 'delete')
@@ -35,10 +39,10 @@ def delete_template(name: str) -> None:
     ''' Delete template '''
     repository = TemplateRepositoryFactory.create()
     deleted: bool = repository.remove(name)
-    if deleted:
-        click.echo(f'The template "{name}" was deleted!')
+    if not deleted:
+        logger.warning(f'No template found using the name "{name}"')
         return
-    click.echo(f'No template found using the name "{name}"')
+    logger.success(f'The template "{name}" was deleted!')
 
 
 @click.command(name = 'create')
@@ -63,7 +67,7 @@ def create_template(name: str, description: str, params: List[str], interactive:
         return create_interactive()
 
     if not name or not params:
-        click.echo(f'Incomplete arguments provided. Use --interactive or provide all required parameters: {locals()}')
+        logger.error(f'Incomplete arguments provided. Use --interactive or provide all required parameters: {locals()}')
         return
 
     return create_from_cli(name, description, params)
@@ -172,6 +176,5 @@ def create_interactive():
 
 # TO DO
 def create_from_cli(name: str, description: str, params: List[str]):
-    click.echo(f'Creating template using this parameters: {locals()}')
     raise NotImplementedError('This option was not implemented yet!')
 
