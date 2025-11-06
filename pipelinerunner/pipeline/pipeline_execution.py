@@ -10,10 +10,10 @@ from pipelinerunner.pipeline.external.azure_pipeline import (
     AzurePipelineAPI,
     DryRunPipelineAPI
 )
-from pipelinerunner.util.logger import Logger
+from pipelinerunner.util.logger import BetterLogger
 
 
-logger = Logger.get_logger(__name__)
+logger = BetterLogger.get_logger(__name__)
 
 
 class PipelineExecution:
@@ -43,7 +43,7 @@ class PipelineExecution:
             current_status: AzurePipelineRunStatus = self.get_current_status()
             if current_status == AzurePipelineRunStatus.CANCELED:
                 raise PipelineExecutionError(f'The run {self.run_info.id} on pipeline {self.runner_name} was CANCELED! Exiting. Please check the runs manually.')
-        logger.info(f'✅ The run {self.run_info.id} on pipeline {self.runner_name} ended successfully!')
+        logger.success(f'The run {self.run_info.id} on pipeline {self.runner_name} ended successfully!')
 
     def is_finished(self) -> bool:
         current_status: AzurePipelineRunStatus = self.get_current_status()

@@ -11,10 +11,10 @@ from dataclasses import dataclass
 
 from pipelinerunner.runner.runner_model import RunnerModel
 from pipelinerunner.config import DevOpsConfig
-from pipelinerunner.util.logger import Logger
+from pipelinerunner.util.logger import BetterLogger
 
 
-logger = Logger.get_logger(__name__)
+logger = BetterLogger.get_logger(__name__)
 
 
 @dataclass
@@ -78,7 +78,7 @@ class AzurePipelineAPI(BasePipelineAPI):
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):
             raw_response = response.json()
-            logger.debug(raw_response)
+            logger.debug(f'Response from POST on {endpoint}:\n {raw_response}')
             raw_status = raw_response['state']
             return AzurePipelineRunInfo(
                 id = raw_response['id'],
@@ -92,7 +92,7 @@ class AzurePipelineAPI(BasePipelineAPI):
     def get_run_status(self, run_id: str) -> AzurePipelineRunStatus:
         endpoint = f"https://dev.azure.com/{self.organization_name}/{self.runner.project_name}/_apis/pipelines/{self.runner.definition_id}/runs/{run_id}?api-version={self.api_version}"
         response = requests.get(endpoint, headers = self.headers)
-        logger.debug(response.json())
+        logger.debug(f'Response from GET on {endpoint}:\n {response.json()}')
         raw_state = response.json()['state']
         return AzurePipelineRunStatus.from_string(raw_state)
 
@@ -116,5 +116,4 @@ class DryRunPipelineAPI(BasePipelineAPI):
         )
     
     def get_run_status(self, run_id: int) -> AzurePipelineRunStatus:
-        logger.info(f"[DRY RUN] Simulating completion of run {run_id}")
         return AzurePipelineRunStatus.COMPLETED

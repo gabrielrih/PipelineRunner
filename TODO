@@ -1,0 +1,19 @@
+# Conversão do Logger para BetterLogger
+
+## runner
+runner_model.py: OK
+commands:
+    runner_show.py: OK
+    runner_run.py: PENDENTE
+    runner_modify.py: PENDENTE
+    runner_extra.py: PENDENTE
+
+## template
+tamplate_model.py: PENDENTE
+commands:
+    template_modify.py: PENDENTE
+    template_show.py: OK
+
+
+## pipeline
+OK

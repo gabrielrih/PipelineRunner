@@ -4,6 +4,10 @@ from typing import List, Optional
 
 from pipelinerunner.template.template_repository import TemplateRepositoryFactory
 from pipelinerunner.template.template_model import TemplateModel
+from pipelinerunner.util.logger import BetterLogger
+
+
+logger = BetterLogger.get_logger(__name__)
 
 
 @click.command(name = 'list')
@@ -11,11 +15,30 @@ def list_all_templates() -> None:
     ''' List all templates '''
     repository = TemplateRepositoryFactory.create()
     templates: List[TemplateModel] = repository.get_all()
-    if templates:
-        click.echo('List of templates:')
-        for template in templates:
-            click.echo(f' - {template}')
-    click.echo(f'{len(templates)} templates have been found!')
+
+    if not templates:
+        logger.warning('No template was found!')
+        return
+    
+    # TO DO
+    # Better way to get the rows and columns
+    rows = []
+    for t in templates:
+        param_names = (
+            ", ".join([p.name for p in t.parameters])
+            if t.parameters
+            else "-"
+        )
+        rows.append([
+            t.name,
+            t.description,
+            param_names
+        ])
+    logger.print_table(
+        title = f'List of {len(templates)} template(s)',
+        columns = ['Name', "Description", "Parameters"],
+        rows = rows
+    )
 
 
 @click.command(name = 'show')
@@ -24,7 +47,8 @@ def show_template(name: str) -> None:
     ''' Show template '''
     repository = TemplateRepositoryFactory.create()
     template: Optional[TemplateModel] = repository.get(name)
-    if template:
-        click.echo(template.to_pretty_json())
+    if not template:
+        logger.error(f'No template found using name "{name}"')
         return
-    click.echo(f'No template found using the name "{name}"')
+    logger.info(f'Showing template "{name}"')
+    logger.print_json(content = template.to_dict())

@@ -6,10 +6,6 @@ from pipelinerunner.pipeline.pipeline_executor import (
     SequentialPipelineExecutor,
     ParallelPipelineExecutor
 )
-from pipelinerunner.util.logger import Logger
-
-
-logger = Logger.get_logger(__name__)
 
 
 class PipelineBatchExecutor:

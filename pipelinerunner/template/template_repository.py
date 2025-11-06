@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
 
-
 from pipelinerunner.template.template_model import TemplateModel
 from pipelinerunner.template.template_serializer import TemplateSerializer
 from pipelinerunner.repository.base import BaseOnDiskRepository

@@ -1,8 +1,7 @@
-from typing import List, Optional
+from typing import List, Dict, Optional
 from dataclasses import dataclass, asdict
 
 from pipelinerunner.template.parameter_model import TemplateParameter
-from pipelinerunner.util.json import to_pretty_json
 
 
 @dataclass
@@ -20,5 +19,5 @@ class TemplateModel:
             f'({param_count} parameters)'
         )
 
-    def to_pretty_json(self) -> str:
-        return to_pretty_json(content = asdict(self))
+    def to_dict(self) -> Dict:
+        return asdict(self)

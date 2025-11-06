@@ -4,6 +4,10 @@ from typing import List, Optional
 
 from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.runner.runner_model import RunnerModel
+from pipelinerunner.util.logger import BetterLogger
+
+
+logger = BetterLogger.get_logger(__name__)
 
 
 @click.command(name = 'list')
@@ -11,11 +15,22 @@ def list_all_runner() -> None:
     ''' List all runners '''
     repository = RunnerRepositoryFactory.create()
     runners: List[RunnerModel] = repository.get_all()
-    if runners:
-        click.echo('List of runners:')
-        for runner in runners:
-            click.echo(f' - {runner}')
-    click.echo(f'{len(runners)} runners have been found!')
+    
+    if not runners:
+        logger.warning('No runner was found!')
+        return
+    
+    # TO DO
+    # Better way to get the rows and columns
+    rows = [
+        [r.name, r.project_name, r.pipeline_name, r.branch_name]
+        for r in runners
+    ]
+    logger.print_table(
+        title = f'List of {len(runners)} runner(s)',
+        columns = ['Name', 'Project', 'Pipeline', 'Branch'],
+        rows = rows,
+    )
 
 
 @click.command(name = 'show')
@@ -24,7 +39,8 @@ def show_runner(name: str) -> None:
     ''' Show runner '''
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name)
-    if runner:
-        click.echo(runner.to_pretty_json())
+    if not runner:
+        logger.error(f'No runner found using the name "{name}"')
         return
-    click.echo(f'No runner found using the name "{name}"')
+    logger.info(f'Showing runner "{name}":')
+    logger.print_json(content = runner.to_dict())

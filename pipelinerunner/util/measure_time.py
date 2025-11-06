@@ -2,10 +2,10 @@ from time import time
 from typing import Callable
 from functools import wraps
 
-from pipelinerunner.util.logger import Logger
+from pipelinerunner.util.logger import BetterLogger
 
 
-logger = Logger.get_logger(__name__)
+logger = BetterLogger.get_logger(__name__)
 
 
 def measure_time(func: Callable):
@@ -13,7 +13,11 @@ def measure_time(func: Callable):
     def wrapper(*args, **kwargs):
         start_time = time()
         result = func(*args, **kwargs)
-        elapsed_time = (time() - start_time) / 60
-        logger.info(f'Execution completed in {elapsed_time:.2f} minutes.')
+        elapsed = time() - start_time
+        if elapsed < 60:
+            logger.debug(f"Execution completed in {elapsed:.2f} seconds.")
+            return result
+        minutes = elapsed / 60
+        logger.debug(f"✅ Execution completed in {minutes:.2f} minutes.")
         return result
     return wrapper
