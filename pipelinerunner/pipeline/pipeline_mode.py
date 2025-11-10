@@ -25,3 +25,14 @@ class PipelineExecutionMode(Enum):
             message += f'{str(mode.value)}: {str(mode.description)}'
             is_first = False
         return message
+
+    @staticmethod
+    def from_value(value) -> 'PipelineExecutionMode':
+        if not value:
+            raise ValueError("Execution mode cannot be empty")
+        normalized = value.lower().strip()
+        for mode in PipelineExecutionMode:
+            if mode.value == normalized:
+                return mode
+        valid_values = ", ".join(PipelineExecutionMode.get_values())
+        raise ValueError(f"Invalid execution mode '{value}'. Valid values are: {valid_values}")

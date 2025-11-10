@@ -36,6 +36,11 @@ class SequentialPipelineExecutor(BasePipelineExecutor):
             else:
                 execution.start()
 
+        logger.info(
+            f'All runs on pipeline "{self.runner.pipeline_name}" '
+            f'(definition_id = {self.runner.definition_id}) completed!'
+        )
+
 
 class ParallelPipelineExecutor(BasePipelineExecutor):
     def __init__(self, runner: RunnerModel, wait: bool = True, dry_run: bool = False):
@@ -54,7 +59,7 @@ class ParallelPipelineExecutor(BasePipelineExecutor):
             executions.append(execution)
 
         if not self.wait:
-            logger.success('All pipelines started (not waiting)!')
+            logger.success('All pipelines have been started (no waiting)! Check manually their status.')
             return
 
         logger.info(f'Waiting {len(self.runner.runs)} run(s) to complete')
@@ -70,7 +75,7 @@ class ParallelPipelineExecutor(BasePipelineExecutor):
                     progress.update(task, completed = total - len(executions))
             progress.update(task, completed = total)
 
-        logger.success(
+        logger.info(
             f'All runs on pipeline "{self.runner.pipeline_name}" '
             f'(definition_id = {self.runner.definition_id}) completed!'
         )

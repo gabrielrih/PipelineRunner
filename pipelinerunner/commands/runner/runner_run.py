@@ -83,5 +83,6 @@ def run_from_file(filename: str, mode: str, no_wait: bool, dry_run: bool):
 
 def _execute_runners(runners: List[RunnerModel], mode: str, no_wait: bool, dry_run: bool):
     wait: bool = not no_wait
+    mode = PipelineExecutionMode.from_value(mode)
     executor = PipelineBatchExecutor(runners, mode, wait, dry_run)
     executor.run_all()

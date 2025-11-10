@@ -31,26 +31,42 @@ class PipelineExecution:
 
     def start(self):
         if self.run_info:
-            raise PipelineExecutionAlreadyRunning(f'The run {self.run_info.id} is already running!')
+            raise PipelineExecutionAlreadyRunning(
+                f'The run {self.run_info.id} is already running!'
+            )
         self.run_info: AzurePipelineRunInfo = self.api.trigger_pipeline(self.params)
+        logger.info(f'Started run {self.run_info.id} for pipeline "{self.runner_name}"')
 
     def start_and_wait(self):
         self.start()
-        logger.info(f'Waiting the run {self.run_info.id } to complete')
-        current_status = self.run_info.status
-        while current_status != AzurePipelineRunStatus.COMPLETED:
+        logger.info(f'Waiting for run {self.run_info.id } to complete...')
+
+        while True:
             time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
-            current_status: AzurePipelineRunStatus = self.get_current_status()
-            if current_status == AzurePipelineRunStatus.CANCELED:
-                raise PipelineExecutionError(f'The run {self.run_info.id} on pipeline {self.runner_name} was CANCELED! Exiting. Please check the runs manually.')
-        logger.success(f'The run {self.run_info.id} on pipeline {self.runner_name} ended successfully!')
+            status: AzurePipelineRunStatus = self.get_current_status()
+            logger.debug(f'Current status of run {self.run_info.id}: {status}')
+
+            if status.is_running():
+                continue
+
+            if not status.is_completed():
+                logger.error(f'Run {self.run_info.id} on pipeline {self.runner_name} ended abnormally with state = {status.state.name}')
+                return
+
+            if not status.is_successful():
+                logger.error(f'Run {self.run_info.id} on pipeline {self.runner_name} failed with result = {status.result.name}')
+                return
+
+            logger.success(f'Run {self.run_info.id} on pipeline {self.runner_name} completed successfully!')
 
     def is_finished(self) -> bool:
-        current_status: AzurePipelineRunStatus = self.get_current_status()
-        if current_status == AzurePipelineRunStatus.COMPLETED:
+        status: AzurePipelineRunStatus = self.get_current_status()
+        if status.is_completed():
+            if status.is_successful():
+                logger.success(f'Run {self.run_info.id} finished successfully.')
+                return True
+            logger.error(f'Run {self.run_info.id} finished with result = {status.result.name}.')
             return True
-        if current_status == AzurePipelineRunStatus.CANCELED:
-            raise PipelineExecutionError(f'The run {self.run_info.id} on pipeline {self.runner_name} was CANCELED! Exiting. Please check the runs manually.')
         return False
     
     def get_current_status(self) -> AzurePipelineRunStatus:
