@@ -35,7 +35,7 @@ logger = BetterLogger.get_logger(__name__)
               default = False,
               help = 'Dry run')
 def run(name: str, from_file: str, mode: str, no_wait: bool, dry_run: bool):
-    ''' Start a runner '''
+    ''' Execute Azure DevOps pipelines using a saved runner or JSON file '''
     if not name and not from_file:
         logger.error('Incomplete arguments provided. Use the --from-file or provide the name argument')
         return

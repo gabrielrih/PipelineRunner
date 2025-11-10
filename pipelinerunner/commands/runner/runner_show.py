@@ -12,7 +12,7 @@ logger = BetterLogger.get_logger(__name__)
 
 @click.command(name = 'list')
 def list_all_runner() -> None:
-    ''' List all runners '''
+    ''' List all saved runners '''
     repository = RunnerRepositoryFactory.create()
     runners: List[RunnerModel] = repository.get_all()
     
@@ -36,7 +36,7 @@ def list_all_runner() -> None:
 @click.command(name = 'show')
 @click.argument('name', type = click.STRING)
 def show_runner(name: str) -> None:
-    ''' Show runner '''
+    ''' Display detailed information about a specific runner'''
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name)
     if not runner:

@@ -9,7 +9,7 @@ from pipelinerunner.commands.runner.runner_extra import export_runner, validate_
 
 @click.group()
 def runner():
-    ''' Defining runners '''
+    ''' Manage pipeline execution configurations (runners) '''
     pass
 
 

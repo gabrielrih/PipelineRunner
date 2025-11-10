@@ -12,7 +12,7 @@ logger = BetterLogger.get_logger(__name__)
 
 @click.command(name = 'list')
 def list_all_templates() -> None:
-    ''' List all templates '''
+    ''' List all saved templates '''
     repository = TemplateRepositoryFactory.create()
     templates: List[TemplateModel] = repository.get_all()
 
@@ -44,7 +44,7 @@ def list_all_templates() -> None:
 @click.command(name = 'show')
 @click.argument('name', type = click.STRING)
 def show_template(name: str) -> None:
-    ''' Show template '''
+    ''' Display detailed information about a specific template '''
     repository = TemplateRepositoryFactory.create()
     template: Optional[TemplateModel] = repository.get(name)
     if not template:

@@ -21,7 +21,7 @@ logger = BetterLogger.get_logger(__name__)
               required = False,
               help = 'Output file path (default: <runner_name>.json)')
 def export_runner(name: str, output: Optional[str]) -> None:
-    ''' Export runner to JSON file '''
+    ''' Export a runner configuration to a JSON file '''
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name)
     if not runner:
@@ -57,7 +57,7 @@ def export_runner(name: str, output: Optional[str]) -> None:
               required = True,
               help = 'JSON file path to validate')
 def validate_runner_file(file: str) -> None:
-    ''' Validate runner JSON file format '''  
+    ''' Validate the structure and format of a runner JSON file '''  
     file_path = Path(file)
     if not file_path.exists():
         logger.error(f'File not found: {file_path.absolute()}')

@@ -19,7 +19,7 @@ logger = BetterLogger.get_logger(__name__)
               default = False,
               help = 'Force interactive mode')
 def create_runner(from_template: str, interactive: bool):
-    ''' Create runner'''
+    ''' Create a new runner '''
     if interactive:
         return create_interactive()
 
