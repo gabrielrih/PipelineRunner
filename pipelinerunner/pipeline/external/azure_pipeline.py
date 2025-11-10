@@ -159,7 +159,7 @@ class DryRunPipelineAPI(BasePipelineAPI):
         )
         return AzurePipelineRunInfo(id = fake_id, status = status)
     
-    def get_run_status(self, _: int) -> AzurePipelineRunStatus:
+    def get_run_status(self, *args, **kwargs) -> AzurePipelineRunStatus:
         state = AzurePipelineRunState.COMPLETED
         result = AzurePipelineRunResult.SUCCEEDED
         return AzurePipelineRunStatus(state = state, result = result)

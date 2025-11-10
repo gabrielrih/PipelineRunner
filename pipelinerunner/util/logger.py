@@ -1,6 +1,4 @@
 import os
-import logging
-import logging.config
 
 from rich.console import Console
 from rich.table import Table
@@ -9,22 +7,6 @@ from rich.theme import Theme
 from typing import Dict
 
 from pipelinerunner.util.json import to_pretty_json
-
-
-LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-
-
-class Logger:
-    @staticmethod
-    def get_logger(name):
-        logger = logging.getLogger(name)
-        logger.setLevel(level=LOG_LEVEL)
-        handler = logging.StreamHandler()
-        handler.setLevel(LOG_LEVEL)
-        formatter = logging.Formatter("%(levelname)s: %(message)s")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        return logger
 
 
 class BetterLogger:
@@ -43,15 +25,16 @@ class BetterLogger:
         "error": 40
     }
 
-    DEFAULT_MIN_LEVEL = 'debug'
-    MIN_LEVEL = LEVELS.get(os.getenv('LOG_LEVEL', DEFAULT_MIN_LEVEL).lower(), LEVELS[DEFAULT_MIN_LEVEL])
+    DEFAULT_MIN_LEVEL = 'info'
+    ENV_LEVEL = os.getenv('LOG_LEVEL', DEFAULT_MIN_LEVEL).lower()
+    MIN_LEVEL_NUM = LEVELS.get(ENV_LEVEL, LEVELS[DEFAULT_MIN_LEVEL])
 
     @classmethod
     def get_logger(cls, name: str):
         return cls()
 
     def _should_log(self, level: str) -> bool:
-        return self.LEVELS[level] >= self.MIN_LEVEL
+        return self.LEVELS[level] >= self.MIN_LEVEL_NUM
 
     def message(self, message: str):
         ''' Print a neutral message without log level or icon '''
@@ -88,7 +71,7 @@ class BetterLogger:
             SpinnerColumn(),
             TextColumn("[cyan]{task.description}"),
             TimeElapsedColumn(),
-            transient = False,
+            transient = True,
             console = cls._console
         )
 
