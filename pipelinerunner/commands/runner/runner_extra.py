@@ -8,6 +8,10 @@ from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.runner.runner_serializer import RunnerSerializer
 from pipelinerunner.runner.runner_model import RunnerModel
 from pipelinerunner.util.json import write_json_on_file, load_json_from_file
+from pipelinerunner.util.logger import BetterLogger
+
+
+logger = BetterLogger.get_logger(__name__)
 
 
 @click.command(name = 'export')
@@ -21,7 +25,7 @@ def export_runner(name: str, output: Optional[str]) -> None:
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name)
     if not runner:
-        click.echo(f'No runner found using the name "{name}"')
+        logger.warning(f'No runner found using the name "{name}"')
         return
     
     if not output:
@@ -39,12 +43,12 @@ def export_runner(name: str, output: Optional[str]) -> None:
         
         write_json_on_file(data, output_path)
         
-        click.echo(f'✅ Runner "{name}" exported successfully!')
-        click.echo(f'   File: {output_path.absolute()}')
-        click.echo(f'   Runs: {len(runner.runs)}')
+        logger.success(f'Runner "{name}" exported successfully!')
+        logger.message(f'   File: {output_path.absolute()}')
+        logger.message(f'   Runs: {len(runner.runs)}')
         
     except Exception as e:
-        click.echo(f'❌ Failed to export runner: {str(e)}')
+        logger.error(f'Failed to export runner: {str(e)}')
 
 
 @click.command(name = 'validate')
@@ -56,11 +60,11 @@ def validate_runner_file(file: str) -> None:
     ''' Validate runner JSON file format '''  
     file_path = Path(file)
     if not file_path.exists():
-        click.echo(f'❌ File not found: {file_path.absolute()}')
+        logger.error(f'File not found: {file_path.absolute()}')
         return
     
     try:
-        click.echo(f'Validating file: {file_path.absolute()}\n')
+        logger.info(f'Validating file: {file_path.absolute()}')
         data: Union[Dict, List[Dict]] = load_json_from_file(file_path)
         
         serializer = RunnerSerializer()
@@ -68,36 +72,51 @@ def validate_runner_file(file: str) -> None:
         if isinstance(runners, RunnerModel):
             runners = [ runners ]
         
-        click.echo('✅ The file is valid!')
-        click.echo('\n📊 Summary:')
-        click.echo(f'   Total runners: {len(runners)}')
-        
+        logger.success('The file format is valid!')
+        logger.info(f'Total runners: {len(runners)}')
+
         for idx, runner in enumerate(runners, 1):
-            click.echo(f'\n   Runner #{idx}:')
-            click.echo(f'     Name: {runner.name}')
-            click.echo(f'     Project: {runner.project_name}')
-            click.echo(f'     Pipeline: {runner.pipeline_name}')
-            click.echo(f'     Definition ID: {runner.definition_id}')
-            click.echo(f'     Branch: {runner.branch_name}')
-            click.echo(f'     Runs: {len(runner.runs)}')
-            
+            runner_rows = [
+                ["Name", runner.name],
+                ["Project", runner.project_name],
+                ["Pipeline", runner.pipeline_name],
+                ["Definition ID", runner.definition_id],
+                ["Branch", runner.branch_name],
+                ["Runs", len(runner.runs)],
+            ]
+            logger.print_table(
+                title=f"Runner #{idx}",
+                columns=["Field", "Value"],
+                rows=runner_rows,
+            )
+
             if runner.runs:
+                run_rows = []
                 for run_idx, run in enumerate(runner.runs, 1):
                     param_count = len(run.parameters)
-                    param_names = list(run.parameters.keys()) if run.parameters else []
-                    click.echo(f'       Run #{run_idx}: {param_count} parameter(s) {param_names}')
-        
-        click.echo('\n✅ All runners are valid and ready to use!')
+                    param_names = ", ".join(run.parameters.keys()) if run.parameters else "-"
+                    run_rows.append([f"Run #{run_idx}", f"{param_count} parameter(s)", param_names])
+
+                logger.print_table(
+                    title=f"Runner #{idx} – Runs",
+                    columns=["Run", "Details", "Parameters"],
+                    rows=run_rows,
+                )
+
+        logger.success('All runners are valid and ready to use!')
         
     except FileNotFoundError:
-        click.echo(f'❌ File not found: {file_path.absolute()}')
+        logger.error(f'File not found: {file_path.absolute()}')
 
     except Exception as e:
-        click.echo('❌ Validation failed!')
-        click.echo('\n🔍 Error details:')
-        click.echo(f'   {type(e).__name__}: {str(e)}')
-        click.echo('\n💡 Common issues:')
-        click.echo('   • Missing required fields (name, project_name, definition_id, pipeline_name)')
-        click.echo('   • Invalid JSON syntax')
-        click.echo('   • Incorrect data types')
-        click.echo('   • Missing "runs" array')
+        error_message = (
+            "Validation failed!\n\n"
+            "🔍 Error details:\n"
+            f"   {type(e).__name__}: {str(e)}\n\n"
+            "💡 Common issues:\n"
+            "   • Missing required fields (name, project_name, definition_id, pipeline_name)\n"
+            "   • Invalid JSON syntax\n"
+            "   • Incorrect data types\n"
+            "   • Missing \"runs\" array"
+        )
+        logger.error(error_message)

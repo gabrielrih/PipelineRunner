@@ -2,7 +2,8 @@ import click
 
 from pipelinerunner.commands.runner.runner_run import run
 from pipelinerunner.commands.runner.runner_show import list_all_runner, show_runner
-from pipelinerunner.commands.runner.runner_modify import create_runner, update_runner, delete_runner
+from pipelinerunner.commands.runner.runner_modify import update_runner, delete_runner
+from pipelinerunner.commands.runner.runner_create import create_runner
 from pipelinerunner.commands.runner.runner_extra import export_runner, validate_runner_file
 
 

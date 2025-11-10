@@ -1,11 +1,8 @@
 import click
 
 from pipelinerunner.commands.template.template_show import list_all_templates, show_template
-from pipelinerunner.commands.template.template_modify import (
-    create_template,
-    update_template,
-    delete_template
-)
+from pipelinerunner.commands.template.template_modify import update_template, delete_template
+from pipelinerunner.commands.template.template_create import create_template
 
 
 @click.group()

@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 
 from pipelinerunner.runner.runner_model import RunnerModel
 from pipelinerunner.pipeline.pipeline_execution import PipelineExecution
-from pipelinerunner.util.logger import Logger
+from pipelinerunner.util.logger import BetterLogger
 
 
-logger = Logger.get_logger(__name__)
+logger = BetterLogger.get_logger(__name__)
 
 
 class BasePipelineExecutor(ABC):
@@ -42,7 +42,11 @@ class ParallelPipelineExecutor(BasePipelineExecutor):
         super().__init__(runner, wait, dry_run)
 
     def run(self):
-        logger.info(f'Starting at once {len(self.runner.runs)} runs on pipeline "{self.runner.project_name}/{self.runner.pipeline_name}" using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})')
+        logger.info(
+            f'Starting at once {len(self.runner.runs)} runs on pipeline '
+            f'"{self.runner.project_name}/{self.runner.pipeline_name}" '
+            f'using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})'
+        )
         executions = list()
         for run in self.runner.runs:
             execution = PipelineExecution(self.runner, run.parameters, self.dry_run)
@@ -50,14 +54,23 @@ class ParallelPipelineExecutor(BasePipelineExecutor):
             executions.append(execution)
 
         if not self.wait:
-            logger.info('✅ All pipelines started (not waiting)!')
+            logger.success('All pipelines started (not waiting)!')
             return
 
         logger.info(f'Waiting {len(self.runner.runs)} run(s) to complete')
-        while executions:
-            time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
-            logger.info(f'Executions still running: {len(executions)}')
-            for execution in executions:
-                if execution.is_finished():
-                    executions.remove(execution)
-        logger.info(f'✅ All runs on pipeline {self.runner.pipeline_name} (definition_id = {self.runner.definition_id}) had finished!')
+
+        total = len(executions)
+        with logger.progress("Monitoring pipeline executions") as progress:
+            task = progress.add_task("Active runs", total = total, completed = 0)
+            while executions:
+                time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
+                finished = [ e for e in executions if e.is_finished() ] 
+                for e in finished:
+                    executions.remove(e)
+                    progress.update(task, completed = total - len(executions))
+            progress.update(task, completed = total)
+
+        logger.success(
+            f'All runs on pipeline "{self.runner.pipeline_name}" '
+            f'(definition_id = {self.runner.definition_id}) completed!'
+        )
