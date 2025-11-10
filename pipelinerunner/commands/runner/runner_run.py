@@ -9,10 +9,10 @@ from pipelinerunner.runner.runner_serializer import RunnerSerializer
 from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
 from pipelinerunner.util.json import load_json_from_file
 from pipelinerunner.util.measure_time import measure_time
-from pipelinerunner.util.logger import Logger
+from pipelinerunner.util.logger import BetterLogger
 
 
-logger = Logger.get_logger(__name__)
+logger = BetterLogger.get_logger(__name__)
 
 
 @click.command(name="run")
@@ -37,7 +37,7 @@ logger = Logger.get_logger(__name__)
 def run(name: str, from_file: str, mode: str, no_wait: bool, dry_run: bool):
     ''' Start a runner '''
     if not name and not from_file:
-        click.echo('Incomplete arguments provided. Use the --from-file or provide the name argument')
+        logger.error('Incomplete arguments provided. Use the --from-file or provide the name argument')
         return
     
     if name:
@@ -51,7 +51,7 @@ def run_using_runner(runner_name: str, mode: str, no_wait: bool, dry_run: bool):
     repository = RunnerRepositoryFactory.create()
     runner: Optional[RunnerModel] = repository.get(name = runner_name)
     if not runner:
-        click.echo(f'No runner found using the name "{runner_name}"')
+        logger.warning(f'No runner found using the name "{runner_name}"')
         return
     
     logger.info(f'Starting single runner: {runner.name}')
@@ -60,16 +60,23 @@ def run_using_runner(runner_name: str, mode: str, no_wait: bool, dry_run: bool):
 
 @measure_time
 def run_from_file(filename: str, mode: str, no_wait: bool, dry_run: bool):
-    click.echo(f'Loading runners from {filename}')
+    logger.info(f'Loading runners from {filename}')
     data: Union[Dict, List[Dict]] = load_json_from_file(filename)
 
     runners = RunnerSerializer.deserialize(data)
     if isinstance(runners, RunnerModel):
         runners = [ runners ]
 
-    logger.info(f"Starting {len(runners)} runner(s):")
-    for r in runners:
-        click.echo(f"  - {r.name} (project: {r.project_name}, pipeline: {r.pipeline_name}, branch: {r.branch_name})")
+    logger.info(f"Starting {len(runners)} runner(s)")
+    rows = [
+        [ r.name, r.project_name, r.pipeline_name, r.branch_name ]
+        for r in runners
+    ]
+    logger.print_table(
+        title = 'Runners',
+        columns = ["Name", "Project", "Pipeline", "Branch"],
+        rows = rows,
+    )
 
     _execute_runners(runners, mode, no_wait, dry_run)
 

@@ -1,0 +1,123 @@
+{
+    "name": "rundeck-slow-queries",
+    "project_name": "AMBEVTECH-ENGENHARIA-AUTOMATION-RUNDECK",
+    "definition_id": "12799",
+    "pipeline_name": "ambevtech-rundeck-manager",
+    "branch_name": "main",
+    "runs": [
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/abi-br-prod/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/abi-las-prod/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/brewtech/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/functions/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/iris/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/iris_02/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/las/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/logco/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_aurora/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_brewtech/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_cora/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_engenharia/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_functions/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_logco/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_nexway/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/sharedservices/slow_query_mongodb_tecx/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/techops/slow_query/job.yaml"
+            }
+        },
+        {
+            "parameters": {
+                "ENVIRONMENT": "prd",
+                "JOB_PATH": "jobs/prd/indicador-eficiencia-bd/tecx/slow_query/job.yaml"
+            }
+        }
+    ]
+}

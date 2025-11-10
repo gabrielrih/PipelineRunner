@@ -53,6 +53,10 @@ class BetterLogger:
     def _should_log(self, level: str) -> bool:
         return self.LEVELS[level] >= self.MIN_LEVEL
 
+    def message(self, message: str):
+        ''' Print a neutral message without log level or icon '''
+        self._console.print(message)
+
     def info(self, message: str):
         if self._should_log("info"):
             self._console.print(f"[info]ℹ️  {message}")
