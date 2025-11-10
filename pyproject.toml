@@ -1,6 +1,6 @@
 [project]
 name = "PipelineRunner"
-version = "0.2.3"
+version = "0.2.4"
 description = "Triggering Azure Pipeline executions in batch"
 authors = [
     {name = "Gabriel Richter",email = "gabrielrih@gmail.com"}

@@ -28,7 +28,7 @@ logger = BetterLogger.get_logger(__name__)
               default = False,
               help = 'Force interactive mode')
 def create_template(name: str, description: str, params: List[str], interactive: bool):
-    ''' Create template'''
+    ''' Create a new parameter template for runner configurations '''
     if interactive:
         return create_interactive()
 

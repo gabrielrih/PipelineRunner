@@ -147,13 +147,13 @@ pipeline runner validate --file examples/my-deployment.json
 
 ```bash
 # Run in parallel (default)
-pipeline runner run --from-file examples/my-deployment.json
+pipeline run --from-file examples/my-deployment.json
 
 # Run sequentially
-pipeline runner run --from-file examples/my-deployment.json --mode sequential
+pipeline run --from-file examples/my-deployment.json --mode sequential
 
 # Dry run (preview without executing)
-pipeline runner run --from-file examples/my-deployment.json --dry-run
+pipeline run --from-file examples/my-deployment.json --dry-run
 ```
 
 ### Option 2: Using Templates and Runners
@@ -372,12 +372,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👤 Author
-
-**Gabriel Richter**
-- Email: gabrielrih@gmail.com
-- GitHub: [@gabrielrih](https://github.com/gabrielrih)
 
 ## 🙏 Acknowledgments
 
