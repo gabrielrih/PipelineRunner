@@ -2,7 +2,7 @@ import click
 
 from pipelinerunner.template.infraestructure.repository import TemplateRepositoryFactory
 from pipelinerunner.template.application.template_model import TemplateModel
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

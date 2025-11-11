@@ -6,7 +6,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.theme import Theme
 from typing import Dict
 
-from pipelinerunner.util.json import to_pretty_json
+from pipelinerunner.shared.util.json import to_pretty_json
 
 
 class BetterLogger:

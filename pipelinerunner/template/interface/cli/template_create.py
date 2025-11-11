@@ -5,7 +5,7 @@ from typing import List
 from pipelinerunner.template.infraestructure.repository import TemplateRepositoryFactory
 from pipelinerunner.template.application.template_model import TemplateModel
 from pipelinerunner.template.application.parameter_model import TemplateParameter, TemplateParameterType
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

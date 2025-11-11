@@ -2,8 +2,9 @@ from abc import ABC
 from pathlib import Path
 from typing import List, Optional, Type, TypeVar
 
-from pipelinerunner.repository.base import BaseOnDiskRepository
-from pipelinerunner.util.json import load_json_from_file, write_json_on_file
+from pipelinerunner.shared.application.base_on_disk_repository import BaseOnDiskRepository
+from pipelinerunner.shared.domain.exceptions import SerializationException, FileSystemException
+from pipelinerunner.shared.util.json import load_json_from_file, write_json_on_file
 
 
 T = TypeVar("T")
@@ -29,8 +30,9 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             content = load_json_from_file(file_path)
             return self.serializer.deserialize(content)
         except Exception as e:
-            # Log error if needed
-            return None
+            raise SerializationException(
+                'Failed to deserialize!'
+            ) from e
 
     def _get_file_path(self, name: str) -> Path:
         # Sanitize filename to avoid issues with special characters
@@ -63,8 +65,9 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             write_json_on_file(data, file_path)
             return True
         except Exception as e:
-            # Log error if needed
-            return False
+            raise SerializationException(
+                'Failed to deserialize!'
+            ) from e
 
     def update(self, name: str, content: T) -> bool:
         old_file_path = self._get_file_path(name)
@@ -81,8 +84,9 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
                 old_file_path.unlink()
             return True
         except Exception as e:
-            # Log error if needed
-            return False
+            raise SerializationException(
+                'Failed to deserialize!'
+            ) from e
 
     def remove(self, name: str) -> bool:
         file_path = self._get_file_path(name)
@@ -94,8 +98,9 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             file_path.unlink()
             return True
         except Exception as e:
-            # Log error if needed
-            return False
+            raise FileSystemException(
+                'Failed to deserialize!'
+            ) from e
 
     def exists(self, name: str) -> bool:
         file_path = self._get_file_path(name)

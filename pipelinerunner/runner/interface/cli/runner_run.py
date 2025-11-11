@@ -2,7 +2,7 @@ import click
 
 from pipelinerunner.pipeline.application.execution_mode import PipelineExecutionMode
 from pipelinerunner.runner.domain.executor_service import RunnerExecutorService
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

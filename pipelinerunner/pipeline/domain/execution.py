@@ -10,7 +10,7 @@ from pipelinerunner.pipeline.infrastructure.azure_pipeline import (
     AzurePipelineAPI,
     DryRunPipelineAPI
 )
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

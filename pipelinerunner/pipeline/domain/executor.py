@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.pipeline.domain.execution import PipelineExecution
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Union, Dict, List
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.runner.domain.serializer import RunnerSerializer
-from pipelinerunner.util.json import load_json_from_file
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.json import load_json_from_file
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

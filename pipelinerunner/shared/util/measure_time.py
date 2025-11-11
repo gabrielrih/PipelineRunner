@@ -2,7 +2,7 @@ from time import time
 from typing import Callable
 from functools import wraps
 
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

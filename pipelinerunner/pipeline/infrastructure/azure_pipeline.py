@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.config import DevOpsConfig
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)

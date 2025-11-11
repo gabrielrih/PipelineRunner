@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar, Optional
+from typing import List, TypeVar, Optional
+
+from pipelinerunner.shared.application.base_repository import BaseRepository
 
 
 T = TypeVar("T")  # T representa qualquer tipo (usado para parametrizar a classe)
 
 
-class BaseOnDiskRepository(ABC, Generic[T]):
+class BaseOnDiskRepository(BaseRepository[T], ABC):
     @abstractmethod
     def initialize(self) -> None: pass
 
@@ -23,3 +25,6 @@ class BaseOnDiskRepository(ABC, Generic[T]):
 
     @abstractmethod
     def remove(self, name: str) -> bool: pass
+
+    @abstractmethod
+    def exists(self, name: str) -> bool: pass

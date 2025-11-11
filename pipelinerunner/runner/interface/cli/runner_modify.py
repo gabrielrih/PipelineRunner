@@ -4,7 +4,7 @@ from typing import Optional
 
 from pipelinerunner.runner.infrastructure.repository import RunnerRepositoryFactory
 from pipelinerunner.runner.application.model import RunnerModel
-from pipelinerunner.util.logger import BetterLogger
+from pipelinerunner.shared.util.logger import BetterLogger
 
 
 logger = BetterLogger.get_logger(__name__)
