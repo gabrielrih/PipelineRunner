@@ -1,6 +1,6 @@
 import click
 
-from pipelinerunner.pipeline.application.execution_mode import PipelineExecutionMode
+from pipelinerunner.pipeline.domain.enums import PipelineExecutionMode
 from pipelinerunner.runner.domain.executor_service import RunnerExecutorService
 from pipelinerunner.shared.util.logger import BetterLogger
 

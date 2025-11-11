@@ -3,13 +3,14 @@ import time
 from typing import Dict
 
 from pipelinerunner.runner.application.model import RunnerModel
-from pipelinerunner.pipeline.infrastructure.azure_pipeline import (
-    AzurePipelineRunInfo,
-    AzurePipelineRunStatus,
-    BasePipelineAPI,
-    AzurePipelineAPI,
-    DryRunPipelineAPI
+from pipelinerunner.pipeline.application.model import AzurePipelineRunInfo, AzurePipelineRunStatus
+from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.domain.exceptions import (
+    PipelineExecutionAlreadyRunning,
+    PipelineExecutionNotStarted
 )
+from pipelinerunner.pipeline.infrastructure.azure_pipeline_api import AzurePipelineAPI
+from pipelinerunner.pipeline.infrastructure.dry_run_pipeline_api import DryRunPipelineAPI
 from pipelinerunner.shared.util.logger import BetterLogger
 
 
@@ -73,12 +74,3 @@ class PipelineExecution:
         if not self.run_info:
             raise PipelineExecutionNotStarted('You must start the pipeline run before check its status')
         return self.api.get_run_status(run_id = self.run_info.id)
-
-
-class PipelineExecutionAlreadyRunning(RuntimeError): pass
-
-
-class PipelineExecutionNotStarted(RuntimeError): pass
-
-
-class PipelineExecutionError(RuntimeError): pass

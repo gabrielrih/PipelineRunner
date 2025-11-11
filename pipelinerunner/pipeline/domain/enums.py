@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 
 class PipelineExecutionMode(Enum):
@@ -36,3 +36,37 @@ class PipelineExecutionMode(Enum):
                 return mode
         valid_values = ", ".join(PipelineExecutionMode.get_values())
         raise ValueError(f"Invalid execution mode '{value}'. Valid values are: {valid_values}")
+
+
+class AzurePipelineRunState(Enum):
+    IN_PROGRESS = 'inProgress'
+    COMPLETED = 'completed'
+    CANCELING = 'canceling'
+    UNKNOWN = 'unknown'
+
+    @staticmethod
+    def from_string(value: str) -> 'AzurePipelineRunState':
+        if not value:
+            return AzurePipelineRunState.UNKNOWN
+        normalized = value.strip().lower()
+        for state in AzurePipelineRunState:
+            if state.value.lower() == normalized:
+                return state
+        return AzurePipelineRunState.UNKNOWN
+
+
+class AzurePipelineRunResult(Enum):
+    SUCCEEDED = 'succeeded'
+    FAILED = 'failed'
+    CANCELED = 'canceled'
+    UNKNOWN = 'unknown'
+
+    @staticmethod
+    def from_string(value: Optional[str]) -> 'AzurePipelineRunResult':
+        if not value:
+            return AzurePipelineRunResult.UNKNOWN
+        normalized = value.strip().lower()
+        for result in AzurePipelineRunResult:
+            if result.value.lower() == normalized:
+                return result
+        return AzurePipelineRunResult.UNKNOWN

@@ -1,8 +1,8 @@
 from typing import List
 
 from pipelinerunner.runner.application.model import RunnerModel
-from pipelinerunner.pipeline.application.execution_mode import PipelineExecutionMode
 from pipelinerunner.pipeline.domain.executor import SequentialPipelineExecutor, ParallelPipelineExecutor
+from pipelinerunner.pipeline.domain.enums import PipelineExecutionMode
 
 
 class PipelineBatchExecutor:

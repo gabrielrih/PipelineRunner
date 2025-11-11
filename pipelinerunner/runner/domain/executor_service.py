@@ -4,7 +4,7 @@ from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.runner.infrastructure.repository import RunnerRepositoryFactory
 from pipelinerunner.runner.domain.serializer import RunnerSerializer
 from pipelinerunner.pipeline.domain.batch_execution import PipelineBatchExecutor
-from pipelinerunner.pipeline.application.execution_mode import PipelineExecutionMode
+from pipelinerunner.pipeline.domain.enums import PipelineExecutionMode
 from pipelinerunner.shared.domain.base_on_disk_repository import BaseOnDiskRepository
 from pipelinerunner.shared.util.json import load_json_from_file
 from pipelinerunner.shared.util.measure_time import measure_time
