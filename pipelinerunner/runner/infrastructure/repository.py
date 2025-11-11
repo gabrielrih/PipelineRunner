@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.runner.domain.serializer import RunnerSerializer
-from pipelinerunner.shared.application.base_on_disk_repository import BaseOnDiskRepository
+from pipelinerunner.shared.domain.base_on_disk_repository import BaseOnDiskRepository
 from pipelinerunner.shared.infrastructure.on_disk_repository import OnDiskRepository
 
 

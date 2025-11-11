@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Optional
 
-from pipelinerunner.shared.application.base_repository import BaseRepository
+from pipelinerunner.shared.domain.base_repository import BaseRepository
 
 
 T = TypeVar("T")  # T representa qualquer tipo (usado para parametrizar a classe)

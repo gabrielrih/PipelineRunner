@@ -3,7 +3,7 @@ from typing import Optional
 from pipelinerunner.runner.infrastructure.repository import RunnerRepositoryFactory
 from pipelinerunner.runner.domain.serializer import RunnerSerializer
 from pipelinerunner.runner.application.model import RunnerModel
-from pipelinerunner.shared.application.base_on_disk_repository import BaseOnDiskRepository
+from pipelinerunner.shared.domain.base_on_disk_repository import BaseOnDiskRepository
 from pipelinerunner.shared.util.json import write_json_on_file
 from pipelinerunner.shared.util.logger import BetterLogger
 

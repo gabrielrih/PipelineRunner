@@ -2,9 +2,13 @@ from abc import ABC
 from pathlib import Path
 from typing import List, Optional, Type, TypeVar
 
-from pipelinerunner.shared.application.base_on_disk_repository import BaseOnDiskRepository
+from pipelinerunner.shared.domain.base_on_disk_repository import BaseOnDiskRepository
 from pipelinerunner.shared.domain.exceptions import SerializationException, FileSystemException
 from pipelinerunner.shared.util.json import load_json_from_file, write_json_on_file
+from pipelinerunner.shared.util.logger import BetterLogger
+
+
+logger = BetterLogger.get_logger(__name__)
 
 
 T = TypeVar("T")
@@ -31,7 +35,7 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             return self.serializer.deserialize(content)
         except Exception as e:
             raise SerializationException(
-                'Failed to deserialize!'
+                f'Failed to deserialize entity from {file_path.name}!'
             ) from e
 
     def _get_file_path(self, name: str) -> Path:
@@ -49,7 +53,7 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
                     self.serializer.deserialize(content)
                 )
             except Exception as e:
-                # Log error and skip invalid files
+                logger.warning(f'Skipping invalid file {file_path.name}: {e}')
                 continue
         
         return data
@@ -66,7 +70,7 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             return True
         except Exception as e:
             raise SerializationException(
-                'Failed to deserialize!'
+                f'Failed to serialize entity to {file_path.name}!'
             ) from e
 
     def update(self, name: str, content: T) -> bool:
@@ -83,9 +87,10 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             if old_file_path != new_file_path:
                 old_file_path.unlink()
             return True
+
         except Exception as e:
             raise SerializationException(
-                'Failed to deserialize!'
+                f'Failed to serialize entity in {old_file_path.name}!'
             ) from e
 
     def remove(self, name: str) -> bool:
@@ -99,7 +104,7 @@ class OnDiskRepository(BaseOnDiskRepository[T], ABC):
             return True
         except Exception as e:
             raise FileSystemException(
-                'Failed to deserialize!'
+                f'Failed to delete file {file_path.name}!'
             ) from e
 
     def exists(self, name: str) -> bool:
