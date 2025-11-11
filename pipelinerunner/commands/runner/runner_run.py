@@ -1,14 +1,7 @@
 import click
 
-from typing import Dict, List, Union, Optional
-
-from pipelinerunner.pipeline.pipeline_batch import PipelineBatchExecutor
 from pipelinerunner.pipeline.pipeline_mode import PipelineExecutionMode
-from pipelinerunner.runner.runner_model import RunnerModel
-from pipelinerunner.runner.runner_serializer import RunnerSerializer
-from pipelinerunner.runner.runner_repository import RunnerRepositoryFactory
-from pipelinerunner.util.json import load_json_from_file
-from pipelinerunner.util.measure_time import measure_time
+from pipelinerunner.runner.runner_executor import RunnerExecutorService
 from pipelinerunner.util.logger import BetterLogger
 
 
@@ -40,49 +33,9 @@ def run(name: str, from_file: str, mode: str, no_wait: bool, dry_run: bool):
         logger.error('Incomplete arguments provided. Use the --from-file or provide the name argument')
         return
     
-    if name:
-        return run_using_runner(runner_name = name, mode = mode, no_wait = no_wait, dry_run = dry_run)
-    
-    return run_from_file(filename = from_file, mode = mode, no_wait = no_wait, dry_run = dry_run)
-
-
-@measure_time
-def run_using_runner(runner_name: str, mode: str, no_wait: bool, dry_run: bool):
-    repository = RunnerRepositoryFactory.create()
-    runner: Optional[RunnerModel] = repository.get(name = runner_name)
-    if not runner:
-        logger.warning(f'No runner found using the name "{runner_name}"')
-        return
-    
-    logger.info(f'Starting single runner: {runner.name}')
-    _execute_runners([ runner ], mode, no_wait, dry_run)
-
-
-@measure_time
-def run_from_file(filename: str, mode: str, no_wait: bool, dry_run: bool):
-    logger.info(f'Loading runners from {filename}')
-    data: Union[Dict, List[Dict]] = load_json_from_file(filename)
-
-    runners = RunnerSerializer.deserialize(data)
-    if isinstance(runners, RunnerModel):
-        runners = [ runners ]
-
-    logger.info(f"Starting {len(runners)} runner(s)")
-    rows = [
-        [ r.name, r.project_name, r.pipeline_name, r.branch_name ]
-        for r in runners
-    ]
-    logger.print_table(
-        title = 'Runners',
-        columns = ["Name", "Project", "Pipeline", "Branch"],
-        rows = rows,
-    )
-
-    _execute_runners(runners, mode, no_wait, dry_run)
-
-
-def _execute_runners(runners: List[RunnerModel], mode: str, no_wait: bool, dry_run: bool):
-    wait: bool = not no_wait
     mode = PipelineExecutionMode.from_value(mode)
-    executor = PipelineBatchExecutor(runners, mode, wait, dry_run)
-    executor.run_all()
+    service = RunnerExecutorService(mode = mode)
+    if name:
+        return service.execute_from_name(name = name, no_wait = no_wait, dry_run = dry_run)
+    
+    return service.execute_from_file(filename = from_file, no_wait = no_wait, dry_run = dry_run)
