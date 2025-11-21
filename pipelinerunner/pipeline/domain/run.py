@@ -6,12 +6,11 @@ from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.pipeline.application.model import (
     AzurePipelineRunInfo,
     AzurePipelineRunStatus,
-    AzurePipelineApproval)
+    AzurePipelineApproval
+)
 from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
 from pipelinerunner.pipeline.domain.enums import AzurePipelineRunState
 from pipelinerunner.pipeline.domain.exceptions import PipelineExecutionAlreadyRunning, PipelineExecutionNotStarted, AzurePipelineAPIError
-from pipelinerunner.pipeline.infrastructure.azure_pipeline_api import AzurePipelineAPI
-from pipelinerunner.pipeline.infrastructure.dry_run_pipeline_api import DryRunPipelineAPI
 from pipelinerunner.shared.util.logger import BetterLogger
 
 
@@ -24,11 +23,10 @@ class PipelineExecution:
     def __init__(self,
                  runner: RunnerModel,
                  params: Dict,
-                 dry_run: bool = False):
+                 pipeline_api: BasePipelineAPI):
         self.params = params
-        self.dry_run = dry_run
         self.runner_name = runner.pipeline_name
-        self.api: BasePipelineAPI = DryRunPipelineAPI(runner) if dry_run else AzurePipelineAPI(runner)
+        self.api = pipeline_api
         self.run_info: AzurePipelineRunInfo = None
 
     def start(self):

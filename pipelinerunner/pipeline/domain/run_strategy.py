@@ -1,10 +1,14 @@
 import time
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional, Dict
 
 from pipelinerunner.runner.application.model import RunnerModel
+from pipelinerunner.pipeline.application.model import ExecutionOptions
 from pipelinerunner.pipeline.domain.run import PipelineExecution
+from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.infrastructure.azure_pipeline_api import AzurePipelineAPI
+from pipelinerunner.pipeline.infrastructure.dry_run_pipeline_api import DryRunPipelineAPI
 from pipelinerunner.shared.util.logger import BetterLogger
 
 
@@ -14,23 +18,35 @@ logger = BetterLogger.get_logger(__name__)
 class BasePipelineExecutionStrategy(ABC):
     TIME_IN_SECONDS_TO_CHECK_STATUS = 10
 
-    def __init__(self,
-                 runner: RunnerModel,
-                 wait: bool = True,
-                 auto_approve: bool = True,
-                 dry_run: bool = False):
+    def __init__(self, runner: RunnerModel, options: ExecutionOptions):
         self.runner = runner
-        self.wait = wait
-        self.auto_approve = auto_approve
-        self.dry_run = dry_run
+        self.options = options
+        self._pipeline_api: Optional[BasePipelineAPI] = None
 
+    def _create_pipeline_execution(self, params: Dict) -> PipelineExecution:
+        return PipelineExecution(
+            runner = self.runner,
+            params = params,
+            pipeline_api = self._get_or_create_api()
+        )
+    
+    def _get_or_create_api(self) -> BasePipelineAPI:
+        if self._pipeline_api is None:
+            self._pipeline_api = self._create_pipeline_api()
+        return self._pipeline_api
+
+    def _create_pipeline_api(self) -> BasePipelineAPI:
+        if self.options.dry_run:
+            return DryRunPipelineAPI(runner = self.runner)
+        return AzurePipelineAPI(runner = self.runner)
+    
     @abstractmethod
     def run(self): pass
 
 
 class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
-    def __init__(self, runner: RunnerModel, wait: bool = True, auto_approve: bool = True, dry_run: bool = False):
-        super().__init__(runner, wait, auto_approve, dry_run)
+    def __init__(self, runner: RunnerModel, options: ExecutionOptions):
+        super().__init__(runner, options)
 
     def run(self):
         logger.info(
@@ -42,14 +58,14 @@ class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
         for idx, run in enumerate(self.runner.runs, 1):
             logger.info(f'Processing run {idx}/{len(self.runner.runs)}')
 
-            execution = PipelineExecution(self.runner, run.parameters, self.dry_run)
+            execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
 
             it_needs_approval = execution.it_needs_approval()  # it may take some seconds
-            if it_needs_approval and self.auto_approve:
+            if it_needs_approval and self.options.auto_approve:
                 execution.approve()
 
-            if self.wait:
+            if self.options.wait:
                 execution.wait_until_it_completes()
 
         logger.info(
@@ -59,8 +75,8 @@ class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
 
 
 class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
-    def __init__(self, runner: RunnerModel, wait: bool = True, auto_approve: bool = True, dry_run: bool = False):
-        super().__init__(runner, wait, auto_approve, dry_run)
+    def __init__(self, runner: RunnerModel, options: ExecutionOptions):
+        super().__init__(runner, options)
 
     def run(self):
         logger.info(
@@ -70,11 +86,11 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
         )
         executions = list()
         for run in self.runner.runs:
-            execution = PipelineExecution(self.runner, run.parameters, self.dry_run)
+            execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
             executions.append(execution)
             
-        if not self.wait:
+        if not self.options.wait:
             logger.success('All pipelines have been started (no waiting)! Check manually their status.')
             return
 
@@ -93,7 +109,7 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
         runs_needing_approval = [ e for e in executions if e.it_needs_approval() ]
 
         if runs_needing_approval:
-            if self.auto_approve:
+            if self.options.auto_approve:
                 qty_approved = sum(1 for e in runs_needing_approval if e.approve())
                 qty_error = len(runs_needing_approval) - qty_approved
                 

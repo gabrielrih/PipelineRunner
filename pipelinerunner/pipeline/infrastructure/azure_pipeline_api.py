@@ -117,7 +117,7 @@ class AzurePipelineAPI(BasePipelineAPI):
         ]
         logger.info(f"Approving run {run_id} using approval_id {approval_id}")
         response = requests.patch(endpoint, headers = self.headers, json = body)
-        logger.debug(f'Response from PATCH on {endpoint}:\n {response}')
+        logger.debug(f'Response from PATCH on {endpoint}:\n {response.json()}')
 
         if response.status_code == HTTPStatus.OK:
             return None

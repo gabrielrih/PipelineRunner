@@ -1,5 +1,6 @@
 import click
 
+from pipelinerunner.pipeline.application.model import ExecutionOptions
 from pipelinerunner.pipeline.domain.enums import PipelineExecutionMode
 from pipelinerunner.runner.domain.executor_service import RunnerExecutorService
 from pipelinerunner.shared.util.logger import BetterLogger
@@ -39,7 +40,12 @@ def run(name: str, from_file: str, mode: str, no_wait: bool, no_auto_approve: bo
     
     mode = PipelineExecutionMode.from_value(mode)
     service = RunnerExecutorService(mode = mode)
+    options = ExecutionOptions(
+        wait = not no_wait,
+        auto_approve = not no_auto_approve,
+        dry_run = dry_run
+    )
     if name:
-        return service.execute_from_name(name = name, no_wait = no_wait, no_auto_approve = no_auto_approve, dry_run = dry_run)
+        return service.execute_from_name(name = name, options = options)
     
-    return service.execute_from_file(filename = from_file, no_wait = no_wait, no_auto_approve = no_auto_approve, dry_run = dry_run)
+    return service.execute_from_file(filename = from_file, options = options)

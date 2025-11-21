@@ -35,3 +35,10 @@ class AzurePipelineApproval:
     id: str
     run_id: str
     status: str
+
+
+@dataclass(frozen = True)
+class ExecutionOptions:
+    wait: bool = True
+    auto_approve: bool = True
+    dry_run: bool = False
