@@ -25,3 +25,13 @@ class AzurePipelineRunStatus:
     
     def __str__(self) -> str:
         return f"State: {self.state.name}, Result: {self.result.name}"
+
+
+# TO DO
+# Transforming the status in a Enum?
+# Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/approvalsandchecks/approvals/query?view=azure-devops-rest-7.1&tabs=HTTP#approvalstatus
+@dataclass
+class AzurePipelineApproval:
+    id: str
+    run_id: str
+    status: str

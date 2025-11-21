@@ -3,7 +3,7 @@ from typing import List, Union, Dict
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.runner.infrastructure.repository import RunnerRepositoryFactory
 from pipelinerunner.runner.domain.serializer import RunnerSerializer
-from pipelinerunner.pipeline.domain.batch_execution import PipelineBatchExecutor
+from pipelinerunner.pipeline.domain.batch_orchestrator import PipelineBatchOrchestrator
 from pipelinerunner.pipeline.domain.enums import PipelineExecutionMode
 from pipelinerunner.shared.domain.base_on_disk_repository import BaseOnDiskRepository
 from pipelinerunner.shared.util.json import load_json_from_file
@@ -19,7 +19,7 @@ class RunnerExecutorService:
         self.repository = repository
 
     @measure_time
-    def execute_from_name(self, name: str, no_wait: bool, dry_run: bool):
+    def execute_from_name(self, name: str, no_wait: bool, no_auto_approve: bool, dry_run: bool):
         runner = self.repository.get(name)
         if not runner:
             logger.warning(f'No runner found with name "{name}"')
@@ -28,7 +28,7 @@ class RunnerExecutorService:
         self._execute([ runner ], no_wait, dry_run)
 
     @measure_time
-    def execute_from_file(self, filename: str, no_wait: bool, dry_run: bool):
+    def execute_from_file(self, filename: str, no_wait: bool, no_auto_approve: bool, dry_run: bool):
         logger.info(f'Loading runners from {filename}')
         data: Union[Dict, List[Dict]] = load_json_from_file(filename)
         runners = RunnerSerializer.deserialize(data)
@@ -37,11 +37,12 @@ class RunnerExecutorService:
 
         logger.info(f"Starting {len(runners)} runner(s)")
         self._print_runners_table(runners)
-        self._execute(runners, no_wait, dry_run)
+        self._execute(runners, no_wait, no_auto_approve, dry_run)
 
-    def _execute(self, runners: List[RunnerModel], no_wait: bool, dry_run: bool):
+    def _execute(self, runners: List[RunnerModel], no_wait: bool, no_auto_approve: bool, dry_run: bool):
         wait = not no_wait
-        executor = PipelineBatchExecutor(runners, self.mode, wait, dry_run)
+        auto_approve = not no_auto_approve
+        executor = PipelineBatchOrchestrator(runners, self.mode, wait, auto_approve, dry_run)
         executor.run_all()
 
     def _print_runners_table(self, runners: List[RunnerModel]):
