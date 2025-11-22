@@ -109,7 +109,7 @@ class ApprovalHandler:
             return
 
         if not self.auto_approve:
-            logger.info(f'{len(needing)} run(s) waiting manual approval')
+            logger.warning(f'{len(needing)} run(s) waiting manual approval')
             return
 
         approved = sum(1 for e in needing if e.approve())
