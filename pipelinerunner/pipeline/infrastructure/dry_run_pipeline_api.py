@@ -3,7 +3,7 @@ import random
 from typing import Dict, Optional
 
 from pipelinerunner.runner.application.model import RunnerModel
-from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.infrastructure.pipeline_api import BasePipelineAPI
 from pipelinerunner.pipeline.application.model import AzurePipelineRunInfo, AzurePipelineRunStatus, AzurePipelineApproval
 from pipelinerunner.pipeline.domain.enums import AzurePipelineRunState, AzurePipelineRunResult
 from pipelinerunner.shared.util.logger import BetterLogger
@@ -25,7 +25,7 @@ class DryRunPipelineAPI(BasePipelineAPI):
             state = AzurePipelineRunState.IN_PROGRESS,
             result = AzurePipelineRunResult.UNKNOWN 
         )
-        return AzurePipelineRunInfo(id = fake_id, status = status)
+        return AzurePipelineRunInfo(id = str(fake_id), status = status)
     
     def get_run_status(self, *args, **kwargs) -> AzurePipelineRunStatus:
         state = AzurePipelineRunState.COMPLETED
@@ -35,7 +35,7 @@ class DryRunPipelineAPI(BasePipelineAPI):
     def get_approval_status(self, run_id: str) -> Optional[AzurePipelineApproval]:
         fake_id = random.randint(10000, 99999)
         return AzurePipelineApproval(
-            id = fake_id,
+            id = str(fake_id),
             run_id = run_id,
             status = 'pending'
         )

@@ -8,7 +8,7 @@ from pipelinerunner.pipeline.application.model import (
     AzurePipelineRunStatus,
     AzurePipelineApproval
 )
-from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.infrastructure.pipeline_api import BasePipelineAPI
 from pipelinerunner.pipeline.domain.enums import AzurePipelineRunState
 from pipelinerunner.pipeline.domain.exceptions import PipelineExecutionAlreadyRunning, PipelineExecutionNotStarted, AzurePipelineAPIError
 from pipelinerunner.shared.util.logger import BetterLogger

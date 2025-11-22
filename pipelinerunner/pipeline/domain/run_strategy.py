@@ -6,9 +6,8 @@ from typing import List, Optional, Dict
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.pipeline.application.model import ExecutionOptions
 from pipelinerunner.pipeline.domain.run import PipelineExecution
-from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
-from pipelinerunner.pipeline.infrastructure.azure_pipeline_api import AzurePipelineAPI
-from pipelinerunner.pipeline.infrastructure.dry_run_pipeline_api import DryRunPipelineAPI
+from pipelinerunner.pipeline.infrastructure.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.infrastructure.factory_pipeline_api import PipelineAPIFactory
 from pipelinerunner.shared.util.logger import BetterLogger
 
 
@@ -16,8 +15,6 @@ logger = BetterLogger.get_logger(__name__)
 
 
 class BasePipelineExecutionStrategy(ABC):
-    TIME_IN_SECONDS_TO_CHECK_STATUS = 10
-
     def __init__(self, runner: RunnerModel, options: ExecutionOptions):
         self.runner = runner
         self.options = options
@@ -32,14 +29,9 @@ class BasePipelineExecutionStrategy(ABC):
     
     def _get_or_create_api(self) -> BasePipelineAPI:
         if self._pipeline_api is None:
-            self._pipeline_api = self._create_pipeline_api()
+            self._pipeline_api = PipelineAPIFactory.create(runner = self.runner, dry_run = self.options.dry_run)
         return self._pipeline_api
 
-    def _create_pipeline_api(self) -> BasePipelineAPI:
-        if self.options.dry_run:
-            return DryRunPipelineAPI(runner = self.runner)
-        return AzurePipelineAPI(runner = self.runner)
-    
     @abstractmethod
     def run(self): pass
 
@@ -61,15 +53,14 @@ class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
 
-            it_needs_approval = execution.it_needs_approval()  # it may take some seconds
-            if it_needs_approval and self.options.auto_approve:
+            if execution.it_needs_approval() and self.options.auto_approve:    # it may take some seconds
                 execution.approve()
 
             if self.options.wait:
                 execution.wait_until_it_completes()
 
         logger.info(
-            f'All runs on pipeline "{self.runner.pipeline_name}" '
+            f'All sequential runs on pipeline "{self.runner.pipeline_name}" '
             f'(definition_id = {self.runner.definition_id}) completed!'
         )
 
@@ -77,6 +68,8 @@ class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
 class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
     def __init__(self, runner: RunnerModel, options: ExecutionOptions):
         super().__init__(runner, options)
+        self.approvals = ApprovalHandler(auto_approve = options.auto_approve)
+        self.monitor = ExecutionMonitor()
 
     def run(self):
         logger.info(
@@ -94,46 +87,56 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             logger.success('All pipelines have been started (no waiting)! Check manually their status.')
             return
 
-        self._handle_approvals(executions = executions)
-
-        self._monitor_executions(executions = executions)
-
+        self.approvals.handle(executions)
+        self.monitor.monitor(executions)
+        
         logger.info(
             f'All runs on pipeline "{self.runner.pipeline_name}" '
             f'(definition_id = {self.runner.definition_id}) completed!'
         )
 
-    def _handle_approvals(self, executions: List[PipelineExecution]):
+
+class ApprovalHandler:
+    def __init__(self, auto_approve: bool = True):
+        self.auto_approve = auto_approve
+
+    def handle(self, executions: List[PipelineExecution]):
         logger.info('Checking for pending approvals...')
         # TO DO: To make this check run in parallel
-        runs_needing_approval = [ e for e in executions if e.it_needs_approval() ]
+        needing = [ e for e in executions if e.it_needs_approval() ]  # it may take some seconds
 
-        if runs_needing_approval:
-            if self.options.auto_approve:
-                qty_approved = sum(1 for e in runs_needing_approval if e.approve())
-                qty_error = len(runs_needing_approval) - qty_approved
-                
-                if qty_approved > 0:
-                    logger.success(f'{qty_approved} run(s) automatically approved')
-                if qty_error > 0:
-                    logger.warning(f'{qty_error} run(s) not approved. Check them manually!')
-                
-                logger.info(f'Waiting {len(executions)} run(s) to complete, {qty_error} run(s) to be manually approved!')
-                return
-                
-            logger.info(f'Waiting {len(executions)} run(s) to complete, {len(runs_needing_approval)} run(s) to be manually approved')
+        if not needing:
             return
 
-        logger.info(f'Waiting {len(executions)} run(s) to complete')
+        if not self.auto_approve:
+            logger.info(f'{len(needing)} run(s) waiting manual approval')
+            return
 
-    def _monitor_executions(self, executions: List[PipelineExecution]):
+        approved = sum(1 for e in needing if e.approve())
+        pending = len(needing) - approved
+
+        if approved:
+            logger.success(f'{approved} run(s) automatically approved')
+
+        if pending:
+            logger.warning(f'{pending} run(s) NOT approved. Manual intervention required.')
+
+
+class ExecutionMonitor:
+    CHECK_INTERVAL = 10
+
+    def monitor(self, executions: List[PipelineExecution]):
+        logger.info(f'Waiting {len(executions)} run(s) to complete')
         total = len(executions)
         with logger.progress("Monitoring pipeline executions") as progress:
             task = progress.add_task("Active runs", total = total, completed = 0)
+
             while executions:
-                time.sleep(self.TIME_IN_SECONDS_TO_CHECK_STATUS)
+                time.sleep(self.CHECK_INTERVAL)
                 finished = [ e for e in executions if e.is_finished() ]
+
                 for e in finished:
                     executions.remove(e)
                     progress.update(task, completed = total - len(executions))
+
             progress.update(task, completed=total)

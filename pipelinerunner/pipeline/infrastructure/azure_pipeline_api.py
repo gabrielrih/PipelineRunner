@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 from pipelinerunner.runner.application.model import RunnerModel
 
-from pipelinerunner.pipeline.domain.pipeline_api import BasePipelineAPI
+from pipelinerunner.pipeline.infrastructure.pipeline_api import BasePipelineAPI
 from pipelinerunner.pipeline.application.model import (
     AzurePipelineRunInfo,
     AzurePipelineRunStatus,
