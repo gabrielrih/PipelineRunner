@@ -29,15 +29,15 @@ class PipelineExecution:
         self.api = pipeline_api
         self.run_info: AzurePipelineRunInfo = None
 
-    def start(self):
+    def start(self) -> None:
         if self.run_info:
             raise PipelineExecutionAlreadyRunning(
-                f'The run {self.run_info.id} is already running!'
+                f'Run {self.run_info.id} is already running!'
             )
         self.run_info: AzurePipelineRunInfo = self.api.trigger_pipeline(self.params)
-        logger.info(f'Started run {self.run_info.id} for pipeline "{self.runner_name}"')
+        logger.info(f'Run {self.run_info.id} started successfully')
 
-    def wait_until_it_completes(self):
+    def wait_until_it_completes(self) -> None:
         if not self.run_info:
             raise PipelineExecutionNotStarted('You must start the pipeline run before wait it for completing!')
         logger.info(f'Waiting for run {self.run_info.id } to complete...')
@@ -95,11 +95,11 @@ class PipelineExecution:
                     return True
                 
                 if time.time() - start_time > 10:
-                    logger.info(f'Run {self.run_info.id} does not need approval')
+                    logger.debug(f'Run {self.run_info.id} does not need approval')
                     return False
 
             if status.state == AzurePipelineRunState.COMPLETED:
-                logger.info(f'Run {self.run_info.id} already completed, no approval needed')
+                logger.debug(f'Run {self.run_info.id} already completed, no approval needed')
                 return False
             
             time.sleep(check_interval)
@@ -113,7 +113,7 @@ class PipelineExecution:
         
         approval: Optional[AzurePipelineApproval] = self.api.get_approval_status(run_id = self.run_info.id)
         if not approval:
-            logger.info(f'There is no need to approve the run {self.run_info.id}')
+            logger.debug(f'There is no need to approve the run {self.run_info.id}')
             return True
 
         if approval.status != 'pending':
