@@ -46,7 +46,7 @@ class AzurePipelineAPI(BasePipelineAPI):
             },
             "templateParameters": params
         }
-        logger.info(f"Triggering pipeline {self.runner.pipeline_name} with parameters: \r\n{json.dumps(params, indent=2)}")
+        logger.info(f"Triggering pipeline with parameters: \r\n{json.dumps(params, indent=2)}")
         response = requests.post(endpoint, headers = self.headers, json = body)
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.CREATED):

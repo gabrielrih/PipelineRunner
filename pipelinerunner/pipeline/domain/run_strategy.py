@@ -102,7 +102,7 @@ class ApprovalHandler:
         self.auto_approve = auto_approve
 
     def handle(self, executions: List[PipelineExecution]):
-        logger.info('Checking for pending approvals...')
+        logger.info('Checking for pending approvals (it may take some seconds)...')
         needing = self._check_approvals_in_parallel(executions)
         if not needing:
             return

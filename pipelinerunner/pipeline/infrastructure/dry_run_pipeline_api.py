@@ -18,7 +18,7 @@ class DryRunPipelineAPI(BasePipelineAPI):
 
     def trigger_pipeline(self, params: Dict) -> AzurePipelineRunInfo:
         fake_id = random.randint(10000, 99999)
-        logger.info(f"[DRY RUN] Would trigger pipeline '{self.runner.pipeline_name}' "
+        logger.info(f"[DRY RUN] Would trigger pipeline "
                     f"with params: {params} -> Fake run_id={fake_id}")
         
         status = AzurePipelineRunStatus(

@@ -18,7 +18,9 @@ class AzurePipelineRunStatus:
         return self.state == AzurePipelineRunState.IN_PROGRESS
 
     def is_completed(self) -> bool:
-        return self.state == AzurePipelineRunState.COMPLETED
+        if self.state == AzurePipelineRunState.IN_PROGRESS:
+            return False
+        return True  # any other state consider as completed
 
     def is_successful(self) -> bool:
         return self.result == AzurePipelineRunResult.SUCCEEDED
