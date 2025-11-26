@@ -48,8 +48,9 @@ class SequentialPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             f'using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})'
         )
 
+        total_of_runs = len(self.runner.runs)
         for idx, run in enumerate(self.runner.runs, 1):
-            logger.info(f'Processing run {idx}/{len(self.runner.runs)}')
+            logger.info(f'Processing run {idx}/{total_of_runs} for pipeline {self.runner.pipeline_name}')
 
             execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
@@ -79,7 +80,9 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             f'using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})'
         )
         executions = list()
-        for run in self.runner.runs:  # starting all runs one by one
+        total_of_runs = len(self.runner.runs)
+        for idx, run in enumerate(self.runner.runs, 1):  # starting all runs one by one
+            logger.info(f'Processing run {idx}/{total_of_runs} for pipeline {self.runner.pipeline_name}')
             execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
             executions.append(execution)
@@ -102,7 +105,7 @@ class ApprovalHandler:
         self.auto_approve = auto_approve
 
     def handle(self, executions: List[PipelineExecution]):
-        logger.info('Checking for pending approvals (it may take some seconds)...')
+        logger.info('Checking for pending approvals (it may take some time)...')
         needing = self._check_approvals_in_parallel(executions)
         if not needing:
             return
