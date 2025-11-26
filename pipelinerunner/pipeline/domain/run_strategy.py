@@ -2,6 +2,7 @@ import time
 
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from pipelinerunner.runner.application.model import RunnerModel
 from pipelinerunner.pipeline.application.model import ExecutionOptions
@@ -78,7 +79,7 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             f'using branch "{self.runner.branch_name}" (definition_id = {self.runner.definition_id})'
         )
         executions = list()
-        for run in self.runner.runs:
+        for run in self.runner.runs:  # starting all runs one by one
             execution: PipelineExecution = self._create_pipeline_execution(params = run.parameters)
             execution.start()
             executions.append(execution)
@@ -87,8 +88,8 @@ class ParallelPipelineExecutionStrategy(BasePipelineExecutionStrategy):
             logger.success('All pipelines have been started (no waiting)! Check manually their status.')
             return
 
-        self.approvals.handle(executions)
-        self.monitor.monitor(executions)
+        self.approvals.handle(executions)  # handling approvals in parallel
+        self.monitor.monitor(executions)  # monitoring all executions until completion
         
         logger.info(
             f'All runs on pipeline "{self.runner.pipeline_name}" '
@@ -102,28 +103,49 @@ class ApprovalHandler:
 
     def handle(self, executions: List[PipelineExecution]):
         logger.info('Checking for pending approvals...')
-        # TO DO: To make this check run in parallel
-        needing = [ e for e in executions if e.it_needs_approval() ]  # it may take some seconds
-
+        needing = self._check_approvals_in_parallel(executions)
         if not needing:
             return
-
         if not self.auto_approve:
             logger.warning(f'{len(needing)} run(s) waiting manual approval')
             return
-
         approved = sum(1 for e in needing if e.approve())
         pending = len(needing) - approved
-
         if approved:
             logger.success(f'{approved} run(s) automatically approved')
-
         if pending:
             logger.warning(f'{pending} run(s) NOT approved. Manual intervention required.')
 
+    def _check_approvals_in_parallel(self, executions: List[PipelineExecution]) -> List[PipelineExecution]:
+        needing = []
+        max_workers = min(len(executions), 10)
+        
+        with ThreadPoolExecutor(max_workers = max_workers) as executor:
+            future_to_execution = {
+                executor.submit(self._check_single_approval, execution): execution 
+                for execution in executions
+            }
+            
+            for future in as_completed(future_to_execution):
+                execution = future_to_execution[future]
+                try:
+                    needs_approval = future.result()
+                    if needs_approval:
+                        needing.append(execution)
+                except Exception as exc:
+                    logger.error(f'Error checking approval for execution: {exc}')
+        
+        return needing
+
+    def _check_single_approval(self, execution: PipelineExecution) -> bool:
+        try:
+            return execution.it_needs_approval()
+        except Exception as exc:
+            logger.error(f'Error checking approval for run {execution.run_info.id if execution.run_info else "unknown"}: {exc}')
+            return False
 
 class ExecutionMonitor:
-    CHECK_INTERVAL = 10
+    CHECK_INTERVAL = 5
 
     def monitor(self, executions: List[PipelineExecution]):
         logger.info(f'Waiting {len(executions)} run(s) to complete')
